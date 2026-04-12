@@ -1,0 +1,31 @@
+/[Ll]ibrary/
+/[Tt]emp/
+/[Obj]/
+/[Build]/
+/[Builds]/
+/[Logs]/
+/[UserSettings]/
+
+# Visual Studio / VS Code файлы
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.svclog
+*.openedition
+
+# Скомпилированные сборки
+/[Aa]ssets/AssetStoreTools*
+/[Aa]ssets/Plugins/Android/assets/
+
+# Файлы ОС
+.DS_Store
+Thumbs.db
+
+# Unity activation/license files
+Unity_v2022.3.49f1.alf
+unity_open.log
