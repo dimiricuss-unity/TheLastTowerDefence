@@ -1,0 +1,21 @@
+{
+    "name": "TheLastTowerDefence.Tests",
+    "rootNamespace": "TheLastTowerDefence.Tests",
+    "references": [
+        "TheLastTowerDefence.Runtime",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "testAssemblies": true
+}
