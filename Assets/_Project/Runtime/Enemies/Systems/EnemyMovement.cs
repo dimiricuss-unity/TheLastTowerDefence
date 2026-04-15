@@ -5,7 +5,7 @@ using TheLastTowerDefence.Enemies.Domain;
 namespace TheLastTowerDefence.Enemies.Systems
 {
     /// <summary>
-    /// Движение к цели через <see cref="Rigidbody2D.MovePosition"/> и поворот через
+    /// Движение к цели через <see cref="Rigidbody2D.AddForce"/> и поворот через
     /// <see cref="Rigidbody2D.MoveRotation"/> (шаг симуляции — <see cref="FixedUpdate"/>).
     /// </summary>
     [DisallowMultipleComponent]
@@ -17,12 +17,17 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] bool faceMovementDirection = true;
         [Tooltip("Добавка к углу Atan2(dy,dx) в градусах Z, чтобы совпасть с ориентацией спрайта.")]
         [SerializeField] float rotationOffsetDegrees = -90f;
+        [Tooltip("Насколько быстро velocity врага стремится к moveSpeed.")]
+        [SerializeField] float acceleration = 16f;
+        [Tooltip("Ограничение силы steering-импульса за шаг физики.")]
+        [SerializeField] float maxSteeringForce = 24f;
 
         Rigidbody2D _rb;
         Transform _target;
         Animator _animator;
         EnemyAttack _attack;
         bool _configured;
+        bool _warnedBodyTypeFallback;
 
         public void Configure(EnemyStatsConfig config, Transform combatTarget)
         {
@@ -83,10 +88,40 @@ namespace TheLastTowerDefence.Enemies.Systems
 
             var current = _rb.position;
             var dest = (Vector2)_target.position;
-            var next = Vector2.MoveTowards(current, dest, moveSpeed * Time.fixedDeltaTime);
-            var delta = next - current;
+            var toTarget = dest - current;
+            var desiredDirection = toTarget.sqrMagnitude > 1e-8f ? toTarget.normalized : Vector2.zero;
 
-            _rb.MovePosition(next);
+            Vector2 velocity;
+            if (_rb.bodyType == RigidbodyType2D.Dynamic)
+            {
+                var desiredVelocity = desiredDirection * moveSpeed;
+                var steering = desiredVelocity - _rb.velocity;
+                var steeringForce = Vector2.ClampMagnitude(steering * acceleration, maxSteeringForce);
+                _rb.AddForce(steeringForce, ForceMode2D.Force);
+
+                velocity = _rb.velocity;
+                if (velocity.sqrMagnitude > moveSpeed * moveSpeed)
+                {
+                    velocity = velocity.normalized * moveSpeed;
+                    _rb.velocity = velocity;
+                }
+            }
+            else
+            {
+                if (!_warnedBodyTypeFallback)
+                {
+                    Debug.LogWarning(
+                        $"[{nameof(EnemyMovement)}] '{name}': Rigidbody2D bodyType={_rb.bodyType}. AddForce работает только с Dynamic, используется fallback MovePosition.",
+                        this);
+                    _warnedBodyTypeFallback = true;
+                }
+
+                var next = Vector2.MoveTowards(current, dest, moveSpeed * Time.fixedDeltaTime);
+                _rb.MovePosition(next);
+                velocity = (next - current) / Mathf.Max(Time.fixedDeltaTime, 1e-5f);
+            }
+
+            var delta = velocity * Time.fixedDeltaTime;
 
             if (faceMovementDirection && delta.sqrMagnitude > 1e-8f)
             {
@@ -96,7 +131,7 @@ namespace TheLastTowerDefence.Enemies.Systems
 
             if (_animator != null && !string.IsNullOrEmpty(speedFloatParameter))
             {
-                var speed = delta.magnitude / Mathf.Max(Time.fixedDeltaTime, 1e-5f);
+                var speed = velocity.magnitude;
                 _animator.SetFloat(speedFloatParameter, speed);
             }
         }
