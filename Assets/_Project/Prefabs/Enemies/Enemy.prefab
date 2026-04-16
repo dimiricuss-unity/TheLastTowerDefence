@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 459001002}
   - component: {fileID: 459001003}
   - component: {fileID: 459001004}
+  - component: {fileID: 459001005}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
@@ -117,6 +118,7 @@ MonoBehaviour:
   health: {fileID: 459001002}
   movement: {fileID: 459001003}
   attack: {fileID: 459001004}
+  heroFocus: {fileID: 459001005}
 --- !u!114 &459001002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +163,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   towerCollisionTag: Tower
   attackTrigger: Attack
-  useAttackAnimation: 0
+  useAttackAnimation: 1
+--- !u!114 &459001005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212243659424581915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fc5d9e8b0a45f3c9d2e1f6a7b8c9d0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movement: {fileID: 459001003}
 --- !u!1 &1399424355964814278
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,7 +203,7 @@ Transform:
   m_GameObject: {fileID: 1399424355964814278}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.031, y: -0.117, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -228,7 +243,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.623991
+  m_Radius: 0.5089774
 --- !u!1 &2922052521639435602
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,7 +270,7 @@ Transform:
   m_GameObject: {fileID: 2922052521639435602}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.031, y: -0.117, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -295,7 +310,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.67259634
+  m_Radius: 0.52609366
 --- !u!1 &3494678465261801597
 GameObject:
   m_ObjectHideFlags: 0
@@ -322,7 +337,7 @@ Transform:
   m_GameObject: {fileID: 3494678465261801597}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.045, y: -0.198, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -362,7 +377,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.26145768
+  m_Radius: 0.37507007
 --- !u!1001 &6326682691192848807
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -518,6 +533,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 80abecc3b960b06499afe18db4eadf8b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 9034771045103146703}
+    - targetCorrespondingSourceObject: {fileID: -8653719598885068355, guid: 80abecc3b960b06499afe18db4eadf8b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5666044847616984795}
   m_SourcePrefab: {fileID: 4843985084834002234, guid: 80abecc3b960b06499afe18db4eadf8b, type: 3}
 --- !u!4 &4675636261224740985 stripped
 Transform:
@@ -550,3 +568,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-5666044847616984795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5776759037340622874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10280b79cddd2374e87413f8d195dba1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

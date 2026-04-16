@@ -20,12 +20,14 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] EnemyHealth health;
         [SerializeField] EnemyMovement movement;
         [SerializeField] EnemyAttack attack;
+        [SerializeField] EnemyHeroFocus heroFocus;
 
         void Reset()
         {
             health = GetComponent<EnemyHealth>();
             movement = GetComponent<EnemyMovement>();
             attack = GetComponent<EnemyAttack>();
+            heroFocus = GetComponent<EnemyHeroFocus>();
         }
 
         void Awake()
@@ -63,6 +65,8 @@ namespace TheLastTowerDefence.Enemies.Systems
             health.Configure(config);
             movement.Configure(config, combatTarget);
             attack.Configure(config, combatTarget);
+            if (heroFocus != null)
+                heroFocus.Initialize(combatTarget);
         }
     }
 }

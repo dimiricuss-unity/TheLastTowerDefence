@@ -42,10 +42,19 @@ namespace TheLastTowerDefence.Enemies.Systems
             SnapFacingTowardTarget();
         }
 
+        /// <summary>Переключение цели преследования (башня / герой) из <see cref="EnemyHeroFocus"/>.</summary>
+        public void SetChaseTarget(Transform chaseTarget)
+        {
+            _target = chaseTarget;
+            if (_configured)
+                SnapFacingTowardTarget();
+        }
+
         void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
-            _animator = GetComponent<Animator>();
+            // Animator находится на дочернем объекте enemy, поэтому ищем в иерархии.
+            _animator = GetComponentInChildren<Animator>(true);
             _attack = GetComponent<EnemyAttack>();
         }
 
@@ -68,7 +77,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             if (!_configured || _target == null)
                 return;
 
-            if (_attack != null && _attack.IsEngagingTower)
+            if (_attack != null && _attack.IsEngagingInMelee)
             {
                 _rb.velocity = Vector2.zero;
                 if (faceMovementDirection)
