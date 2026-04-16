@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
 using TheLastTowerDefence.Enemies.Domain;
+using TheLastTowerDefence.UI;
 
 namespace TheLastTowerDefence.Enemies.Systems
 {
     /// <summary>
-    /// Текущее HP, приём урона, отключение атаки/движения при смерти.
+    /// Текущее HP, приём урона; при смерти отключает атаку/движение, шлёт <see cref="Died"/>, затем отключает объект врага.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class EnemyHealth : MonoBehaviour
@@ -48,6 +49,7 @@ namespace TheLastTowerDefence.Enemies.Systems
 
             _current = Mathf.Max(0f, _current - amount);
             HealthChanged?.Invoke(_current, _max);
+            DamageFloaterRoot.ShowAtEnemy(this, amount);
 
             if (_current <= 0f)
                 Die();
@@ -61,6 +63,7 @@ namespace TheLastTowerDefence.Enemies.Systems
                 _attack.enabled = false;
 
             Died?.Invoke(this);
+            gameObject.SetActive(false);
         }
     }
 }

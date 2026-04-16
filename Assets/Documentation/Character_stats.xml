@@ -12,8 +12,8 @@
   <AllowPNG/>
  </OfficeDocumentSettings>
  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-  <WindowHeight>9975</WindowHeight>
-  <WindowWidth>13725</WindowWidth>
+  <WindowHeight>7950</WindowHeight>
+  <WindowWidth>16770</WindowWidth>
   <WindowTopX>0</WindowTopX>
   <WindowTopY>0</WindowTopY>
   <ProtectStructure>False</ProtectStructure>
@@ -102,7 +102,7 @@
    <Column ss:Width="219.75"/>
    <Column ss:AutoFitWidth="0" ss:Width="96"/>
    <Row ss:AutoFitHeight="0">
-    <Cell ss:StyleID="s62"><Data ss:Type="String">APS: база E9 (APS0), статистика E19 = MIN(3, INT(E9*(1+0.03*B8)*100)/100). Остальное: INT вниз; M, урон E20–E21; крит E16, E24; R1C1 в формулах.</Data></Cell>
+    <Cell ss:StyleID="s62"><Data ss:Type="String">APS: база R9C5 (APS0), статистика = MIN(3, INT(R9C5*(1+0.03*R8C2)*100)/100). Вероятность крита: MIN(75, INT(5+R12C2*0.5+R8C2*0.25+R10C5)), R10C5 — модификатор крита базового оружия. Остальное: INT вниз; урон R20C5–R21C5; R1C1 в формулах.</Data></Cell>
     <Cell ss:StyleID="s62"><Data ss:Type="String"></Data></Cell>
     <Cell ss:StyleID="s62"><Data ss:Type="String"></Data></Cell>
     <Cell ss:StyleID="s62"><Data ss:Type="String"></Data></Cell>
@@ -175,7 +175,7 @@
     <Cell><Data ss:Type="Number">5</Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String">Модификатор крита</Data></Cell>
-    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell><Data ss:Type="Number">1</Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
    </Row>
@@ -215,7 +215,8 @@
     <Cell><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String">Вероятность крита:</Data></Cell>
-    <Cell ss:Formula="=MIN(75,INT(5+R12C2*0.5+R8C2*0.25))"><Data ss:Type="Number">10</Data></Cell>
+    <Cell ss:Formula="=MIN(75,INT(5+R12C2*0.5+R8C2*0.25+R10C5))"><Data
+      ss:Type="Number">11</Data></Cell>
     <Cell><Data ss:Type="String">Урон магией крови:</Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
    </Row>
@@ -303,11 +304,12 @@
     <VerticalResolution>600</VerticalResolution>
    </Print>
    <Selected/>
+   <TopRowVisible>6</TopRowVisible>
    <Panes>
     <Pane>
      <Number>3</Number>
      <ActiveRow>9</ActiveRow>
-     <ActiveCol>3</ActiveCol>
+     <ActiveCol>4</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

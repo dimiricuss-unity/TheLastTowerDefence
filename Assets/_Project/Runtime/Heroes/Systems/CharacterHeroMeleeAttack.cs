@@ -8,6 +8,9 @@ namespace TheLastTowerDefence.Heroes.Systems
     /// Зона ближнего боя на <c>TriggerForEnemies</c>: в зоне несколько врагов, но бьётся только один,
     /// выбираемый случайно; после смерти цели выбирается другой живой из зоны. Урон и APS из
     /// <see cref="CharacterHeroStats"/>, опционально триггер анимации Attack.
+    /// Поворот к цели — только в момент начала замаха (перед <c>SetTrigger</c>), не каждый кадр в бою.
+    /// Если в зоне больше никого не было (после того как там уже были враги), через <see cref="idleReturnFacingDelaySeconds"/>
+    /// восстанавливается ориентация как при старте сцены.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CharacterHeroMeleeAttack : MonoBehaviour
@@ -21,6 +24,10 @@ namespace TheLastTowerDefence.Heroes.Systems
         [SerializeField] Transform facingPivot;
         [Tooltip("Добавка в градусах к углу поворота вокруг мировой Z.")]
         [SerializeField] float rotationOffsetDegrees;
+        [Tooltip("Базовая длительность клипа атаки (в секундах) при speed = 1. Нужна, чтобы масштабировать speed под APS.")]
+        [SerializeField] float baseAttackAnimationDurationSeconds = 1f;
+        [Tooltip("После того как в melee-зоне не осталось врагов, через столько секунд вернуть поворот как при старте сцены.")]
+        [SerializeField] float idleReturnFacingDelaySeconds = 1f;
 
         CharacterHeroStats _stats;
         Animator _animator;
@@ -35,6 +42,26 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         bool _damageEventPending;
         EnemyHealth _pendingDamageVictim;
+        float _pendingSwingStartedTime;
+        [Tooltip("Если событие анимации не пришло (битый клип), сбросить ожидание и продолжить APS.")]
+        [SerializeField] float animationDamageTimeoutSeconds = 2f;
+
+        float _attackAnimatorOriginalSpeed = 1f;
+        bool _attackAnimatorSpeedOverridden;
+
+        bool _usePivotInitialFacing;
+        Quaternion _initialFacingPivotLocalRotation;
+        Vector3 _initialFacingPivotLocalPosition;
+
+        bool _useRigidbodyInitialFacing;
+        float _initialRigidbodyAngleDegrees;
+
+        bool _useRootInitialFacing;
+        Quaternion _initialFacingRootWorldRotation;
+
+        bool _hadMeleeEnemyForIdleReturnFacing;
+        bool _idleFacingReturnScheduled;
+        float _idleFacingReturnAtTime;
 
         void Awake()
         {
@@ -50,8 +77,15 @@ namespace TheLastTowerDefence.Heroes.Systems
             }
         }
 
+        void Start()
+        {
+            CaptureInitialFacing();
+        }
+
         void OnDisable()
         {
+            _idleFacingReturnScheduled = false;
+            _hadMeleeEnemyForIdleReturnFacing = false;
             foreach (var e in _enemiesInRange)
             {
                 if (e != null)
@@ -69,9 +103,27 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_stats == null || !_stats.IsAlive)
                 return;
 
+            if (_enemiesInRange.Count > 0)
+                _idleFacingReturnScheduled = false;
+
+            TryApplyIdleFacingReturnIfReady();
+
+            var cooldown = 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond);
+            if (_damageEventPending && Time.time - _pendingSwingStartedTime > animationDamageTimeoutSeconds)
+                CancelPendingSwing(cooldown);
+
             if (_enemiesInRange.Count == 0)
             {
                 _attackTarget = null;
+                _damageEventPending = false;
+                _pendingDamageVictim = null;
+
+                if (faceTarget && _hadMeleeEnemyForIdleReturnFacing && !_idleFacingReturnScheduled)
+                {
+                    _idleFacingReturnScheduled = true;
+                    _idleFacingReturnAtTime = Time.time + Mathf.Max(0.01f, idleReturnFacingDelaySeconds);
+                }
+
                 return;
             }
 
@@ -79,11 +131,8 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_attackTarget == null || !_attackTarget.IsAlive)
                 return;
 
-            var cooldown = 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond);
             if (Time.time < _nextAttackTime)
                 return;
-
-            _nextAttackTime = Time.time + cooldown;
 
             var damage = _stats.Damage;
             if (damage <= 0f)
@@ -96,14 +145,20 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (useEvent)
             {
                 if (_damageEventPending)
-                    TryApplyPendingDamageFromAnimation();
+                    return;
 
+                BeginAttackAnimation(cooldown);
+                FaceAttackVictim(victim);
                 _damageEventPending = true;
                 _pendingDamageVictim = victim;
+                _pendingSwingStartedTime = Time.time;
                 _animator.SetTrigger(attackTrigger);
                 return;
             }
 
+            _nextAttackTime = Time.time + cooldown;
+
+            FaceAttackVictim(victim);
             if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
                 _animator.SetTrigger(attackTrigger);
 
@@ -125,17 +180,35 @@ namespace TheLastTowerDefence.Heroes.Systems
             var victim = _pendingDamageVictim;
             _pendingDamageVictim = null;
 
+            var cooldown = _stats != null ? 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond) : 0.1f;
+            EndAttackAnimation();
+
             if (_stats == null || !_stats.IsAlive)
                 return;
 
             var damage = _stats.Damage;
             if (damage <= 0f || victim == null)
+            {
+                _nextAttackTime = Time.time + cooldown;
                 return;
+            }
 
             if (!victim.IsAlive || !_enemiesInRange.Contains(victim))
+            {
+                _nextAttackTime = Time.time + cooldown;
                 return;
+            }
 
             ApplyDamageToEnemy(victim, damage);
+            _nextAttackTime = Time.time + cooldown;
+        }
+
+        void CancelPendingSwing(float cooldown)
+        {
+            _damageEventPending = false;
+            _pendingDamageVictim = null;
+            EndAttackAnimation();
+            _nextAttackTime = Time.time + cooldown;
         }
 
         void ApplyDamageToEnemy(EnemyHealth victim, float damage)
@@ -147,14 +220,115 @@ namespace TheLastTowerDefence.Heroes.Systems
             Debug.Log($"[Enemy HP after hero hit] {victim.CurrentHealth:F1} / {victim.MaxHealth} (enemy '{victim.name}')");
         }
 
-        void LateUpdate()
+        void FaceAttackVictim(EnemyHealth victim)
         {
-            if (!faceTarget || _stats == null || !_stats.IsAlive)
+            if (!faceTarget || victim == null || !victim.IsAlive)
                 return;
-            if (_attackTarget == null || !_attackTarget.IsAlive)
+            FaceTowardWorldPosition(GetEnemyWorldCenter(victim));
+        }
+
+        void BeginAttackAnimation(float cooldown)
+        {
+            if (_animator == null)
                 return;
 
-            FaceTowardWorldPosition(_attackTarget.transform.position);
+            if (!_attackAnimatorSpeedOverridden)
+                _attackAnimatorOriginalSpeed = _animator.speed;
+
+            // Если APS совпадает с длительностью клипа — speed ~ 1; при большей APS ускоряем клип.
+            var baseDuration = Mathf.Max(0.01f, baseAttackAnimationDurationSeconds);
+            var desiredCooldown = Mathf.Max(0.01f, cooldown);
+            var speed = baseDuration / desiredCooldown;
+            _animator.speed = speed;
+            _attackAnimatorSpeedOverridden = true;
+        }
+
+        void EndAttackAnimation()
+        {
+            if (_animator == null || !_attackAnimatorSpeedOverridden)
+                return;
+
+            _animator.speed = _attackAnimatorOriginalSpeed;
+            _attackAnimatorSpeedOverridden = false;
+        }
+
+        void CaptureInitialFacing()
+        {
+            if (facingPivot != null)
+            {
+                _usePivotInitialFacing = true;
+                _initialFacingPivotLocalRotation = facingPivot.localRotation;
+                _initialFacingPivotLocalPosition = facingPivot.localPosition;
+                return;
+            }
+
+            if (_facingRigidbody != null)
+            {
+                _useRigidbodyInitialFacing = true;
+                _initialRigidbodyAngleDegrees = _facingRigidbody.rotation;
+                return;
+            }
+
+            if (_facingRoot != null)
+            {
+                _useRootInitialFacing = true;
+                _initialFacingRootWorldRotation = _facingRoot.rotation;
+            }
+        }
+
+        void TryApplyIdleFacingReturnIfReady()
+        {
+            if (!faceTarget || !_idleFacingReturnScheduled || _enemiesInRange.Count > 0)
+                return;
+            if (Time.time < _idleFacingReturnAtTime)
+                return;
+
+            RestoreInitialFacing();
+            _idleFacingReturnScheduled = false;
+            _hadMeleeEnemyForIdleReturnFacing = false;
+        }
+
+        void RestoreInitialFacing()
+        {
+            if (!faceTarget || _facingRoot == null)
+                return;
+
+            if (_usePivotInitialFacing && facingPivot != null)
+            {
+                facingPivot.localRotation = _initialFacingPivotLocalRotation;
+                facingPivot.localPosition = _initialFacingPivotLocalPosition;
+                if (_facingRigidbody != null)
+                    _facingRigidbody.angularVelocity = 0f;
+                return;
+            }
+
+            if (_useRigidbodyInitialFacing && _facingRigidbody != null)
+            {
+                _facingRigidbody.rotation = _initialRigidbodyAngleDegrees;
+                _facingRigidbody.angularVelocity = 0f;
+                return;
+            }
+
+            if (_useRootInitialFacing)
+                _facingRoot.rotation = _initialFacingRootWorldRotation;
+        }
+
+        static Vector3 GetEnemyWorldCenter(EnemyHealth enemy)
+        {
+            if (enemy == null)
+                return default;
+
+            // Prefer a collider center so we face the "body" center, not the root/pivot.
+            var collider2D = enemy.GetComponentInChildren<Collider2D>();
+            if (collider2D != null)
+                return collider2D.bounds.center;
+
+            // Fallback: renderer bounds often match the visible sprite.
+            var renderer = enemy.GetComponentInChildren<Renderer>();
+            if (renderer != null)
+                return renderer.bounds.center;
+
+            return enemy.transform.position;
         }
 
         void EnsureAttackTarget()
@@ -247,11 +421,17 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (health == null || !health.IsAlive)
                 return;
 
+            var wasEmpty = _enemiesInRange.Count == 0;
             if (!_enemiesInRange.Add(health))
                 return;
 
             health.Died += OnEnemyDied;
-            _nextAttackTime = Time.time;
+            _hadMeleeEnemyForIdleReturnFacing = true;
+            // Не сдвигать таймер при каждом новом враге: иначе второй вход в зону
+            // «подтягивает» следующий удар раньше APS и получаются два удара подряд.
+            if (!_damageEventPending && wasEmpty)
+                _nextAttackTime = Mathf.Min(_nextAttackTime, Time.time);
+
             if (_attackTarget == null || !_attackTarget.IsAlive || !_enemiesInRange.Contains(_attackTarget))
                 PickRandomTarget();
         }

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a335be8a9e3d1474891cc10a665ebc0b, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  maxHealth: 300
   damage: 10
   attacksPerSecond: 1

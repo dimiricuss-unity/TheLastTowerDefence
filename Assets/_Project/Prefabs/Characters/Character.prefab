@@ -209,7 +209,7 @@ CircleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.13068008}
+  m_Offset: {x: 0, y: 0.08}
   serializedVersion: 2
   m_Radius: 1.4524264
 --- !u!114 &777777777777777701
@@ -242,6 +242,9 @@ MonoBehaviour:
   faceTarget: 1
   facingPivot: {fileID: 0}
   rotationOffsetDegrees: 0
+  baseAttackAnimationDurationSeconds: 1
+  idleReturnFacingDelaySeconds: 1
+  animationDamageTimeoutSeconds: 2
 --- !u!1 &6178552794846659420
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,7 +347,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 6b6c01ea0e6fca149b6c9ee2527a7697, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.483
       objectReference: {fileID: 0}
     - target: {fileID: -7552582706839291426, guid: 6b6c01ea0e6fca149b6c9ee2527a7697, type: 3}
       propertyPath: m_LocalPosition.z

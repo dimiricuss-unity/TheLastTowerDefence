@@ -3,8 +3,8 @@ using UnityEngine;
 namespace TheLastTowerDefence.Heroes.Systems
 {
     /// <summary>
-    /// Вешается на тот же GameObject, что и <see cref="Animator"/> (например корень Knight из PSB).
-    /// Animation Event в клипе Attack должен вызывать <see cref="OnAttackDamage"/>.
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅ GameObject, пїЅпїЅпїЅ пїЅ <see cref="Animator"/> (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ Knight пїЅпїЅ PSB).
+    /// Animation Event пїЅ пїЅпїЅпїЅпїЅпїЅ Attack пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ <see cref="OnAttackDamage"/>.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CharacterHeroMeleeAttackAnimationRelay : MonoBehaviour
@@ -16,14 +16,14 @@ namespace TheLastTowerDefence.Heroes.Systems
             _melee = transform.root.GetComponentInChildren<CharacterHeroMeleeAttack>(true);
         }
 
-        /// <summary>Имя функции в Animation Event клипа Attack (рекомендуемое).</summary>
+        /// <summary>пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ Animation Event пїЅпїЅпїЅпїЅпїЅ Attack (пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ).</summary>
         public void OnAttackDamage()
         {
             if (_melee != null)
                 _melee.OnAttackDamageAnimationEvent();
         }
 
-        /// <summary>Альтернативное имя события (как у EnemyAnimationEventRelay на врагах).</summary>
+        /// <summary>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅ пїЅ EnemyAnimationEventRelay пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ).</summary>
         public void OnAttackAnimationHit()
         {
             OnAttackDamage();

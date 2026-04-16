@@ -9,6 +9,8 @@ namespace TheLastTowerDefence.Enemies.Systems
     /// <summary>
     /// Ближний бой: триггер врага пересекается с коллайдером башни и/или героя.
     /// Если одновременно башня и герой — урон наносится герою. Движение останавливается в ближнем бою с любой из целей.
+    /// При атаке по анимации скорость клипа масштабируется под <c>attacksPerSecond</c> из SO (как у героя).
+    /// Интервал между ударами — от момента нанесения урона (Animation Event), а не от старта клипа.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class EnemyAttack : MonoBehaviour
@@ -16,6 +18,8 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] string towerCollisionTag = "Tower";
         [SerializeField] string attackTrigger = "Attack";
         [SerializeField] bool useAttackAnimation;
+        [Tooltip("Длительность клипа атаки при Animator.speed = 1. Масштабирование speed под APS из SO: speed = base / cooldown.")]
+        [SerializeField] float baseAttackAnimationDurationSeconds = 1f;
 
         Transform _towerRoot;
         IDamageable _towerDamageable;
@@ -28,6 +32,9 @@ namespace TheLastTowerDefence.Enemies.Systems
         bool _inMeleeWithHero;
         CharacterHeroStats _heroInMelee;
         bool _awaitingAnimationHit;
+
+        float _attackAnimatorOriginalSpeed = 1f;
+        bool _attackAnimatorSpeedOverridden;
 
         /// <summary>
         /// Контакт ближнего боя с башней или с <b>живым</b> героем.
@@ -68,6 +75,11 @@ namespace TheLastTowerDefence.Enemies.Systems
             _animator = GetComponentInChildren<Animator>(true);
         }
 
+        void OnDisable()
+        {
+            EndAttackAnimation();
+        }
+
         void OnTriggerEnter2D(Collider2D other)
         {
             if (!_configured || other == null)
@@ -93,6 +105,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             {
                 _inMeleeWithTower = false;
                 _awaitingAnimationHit = false;
+                EndAttackAnimation();
             }
         }
 
@@ -116,6 +129,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             _inMeleeWithHero = false;
             _heroInMelee = null;
             _awaitingAnimationHit = false;
+            EndAttackAnimation();
         }
 
         bool IsTowerCollider(Collider2D other)
@@ -136,21 +150,32 @@ namespace TheLastTowerDefence.Enemies.Systems
             ClearStaleHeroMeleeState();
 
             if (!IsEngagingInMelee)
+            {
+                if (_awaitingAnimationHit)
+                {
+                    _awaitingAnimationHit = false;
+                    EndAttackAnimation();
+                }
+
+                return;
+            }
+
+            if (_awaitingAnimationHit)
                 return;
 
             if (Time.time < _nextAttackTime)
                 return;
 
-            _nextAttackTime = Time.time + _cooldown;
-
             if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
             {
+                BeginAttackAnimation();
                 _awaitingAnimationHit = true;
                 _animator.SetTrigger(attackTrigger);
                 return;
             }
 
             ApplyDamageNow();
+            _nextAttackTime = Time.time + _cooldown;
         }
 
         void ApplyDamageNow()
@@ -183,6 +208,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             _inMeleeWithHero = false;
             _heroInMelee = null;
             _awaitingAnimationHit = false;
+            EndAttackAnimation();
         }
 
         /// <summary>
@@ -190,13 +216,43 @@ namespace TheLastTowerDefence.Enemies.Systems
         /// </summary>
         public void OnAttackAnimationHit()
         {
-            if (!_configured || !IsEngagingInMelee || _damage <= 0f)
-                return;
             if (!_awaitingAnimationHit)
                 return;
 
+            if (!_configured || !IsEngagingInMelee || _damage <= 0f)
+            {
+                _awaitingAnimationHit = false;
+                EndAttackAnimation();
+                return;
+            }
+
             _awaitingAnimationHit = false;
             ApplyDamageNow();
+            _nextAttackTime = Time.time + _cooldown;
+            EndAttackAnimation();
+        }
+
+        void BeginAttackAnimation()
+        {
+            if (_animator == null)
+                return;
+
+            if (!_attackAnimatorSpeedOverridden)
+                _attackAnimatorOriginalSpeed = _animator.speed;
+
+            var baseDuration = Mathf.Max(0.01f, baseAttackAnimationDurationSeconds);
+            var desiredCooldown = Mathf.Max(0.01f, _cooldown);
+            _animator.speed = baseDuration / desiredCooldown;
+            _attackAnimatorSpeedOverridden = true;
+        }
+
+        void EndAttackAnimation()
+        {
+            if (_animator == null || !_attackAnimatorSpeedOverridden)
+                return;
+
+            _animator.speed = _attackAnimatorOriginalSpeed;
+            _attackAnimatorSpeedOverridden = false;
         }
     }
 }
