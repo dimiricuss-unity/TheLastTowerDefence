@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 205677511447979696}
   - component: {fileID: 3797808928845692333}
   m_Layer: 0
-  m_Name: Character
+  m_Name: Knight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -242,7 +242,6 @@ MonoBehaviour:
   faceTarget: 1
   facingPivot: {fileID: 0}
   rotationOffsetDegrees: 0
-  baseAttackAnimationDurationSeconds: 1
   idleReturnFacingDelaySeconds: 1
   animationDamageTimeoutSeconds: 2
 --- !u!1 &6178552794846659420

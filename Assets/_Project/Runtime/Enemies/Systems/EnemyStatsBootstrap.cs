@@ -66,7 +66,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             movement.Configure(config, combatTarget);
             attack.Configure(config, combatTarget);
             if (heroFocus != null)
-                heroFocus.Initialize(combatTarget);
+                heroFocus.Initialize(combatTarget, config.isMeleeAttacker);
         }
     }
 }

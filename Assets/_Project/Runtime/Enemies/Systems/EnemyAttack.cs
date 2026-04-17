@@ -8,6 +8,7 @@ namespace TheLastTowerDefence.Enemies.Systems
 {
     /// <summary>
     /// Ближний бой: триггер врага пересекается с коллайдером башни и/или героя.
+    /// У <c>isMeleeAttacker</c> из SO герой с тегом <c>RangeHero</c> в контакте не считается целью ближнего урона.
     /// Если одновременно башня и герой — урон наносится герою. Движение останавливается в ближнем бою с любой из целей.
     /// При атаке по анимации скорость клипа масштабируется под <c>attacksPerSecond</c> из SO (как у героя).
     /// Интервал между ударами — от момента нанесения урона (Animation Event), а не от старта клипа.
@@ -15,6 +16,8 @@ namespace TheLastTowerDefence.Enemies.Systems
     [DisallowMultipleComponent]
     public sealed class EnemyAttack : MonoBehaviour
     {
+        const string RangeHeroTag = "RangeHero";
+
         [SerializeField] string towerCollisionTag = "Tower";
         [SerializeField] string attackTrigger = "Attack";
         [SerializeField] bool useAttackAnimation;
@@ -32,6 +35,7 @@ namespace TheLastTowerDefence.Enemies.Systems
         bool _inMeleeWithHero;
         CharacterHeroStats _heroInMelee;
         bool _awaitingAnimationHit;
+        bool _isMeleeAttacker;
 
         float _attackAnimatorOriginalSpeed = 1f;
         bool _attackAnimatorSpeedOverridden;
@@ -54,6 +58,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             _damage = Mathf.Max(0f, config.damage);
             var aps = Mathf.Max(0.01f, config.attacksPerSecond);
             _cooldown = 1f / aps;
+            _isMeleeAttacker = config.isMeleeAttacker;
             _nextAttackTime = Time.time;
             _configured = true;
             _inMeleeWithTower = false;
@@ -113,6 +118,9 @@ namespace TheLastTowerDefence.Enemies.Systems
         {
             var hero = other.GetComponentInParent<CharacterHeroStats>();
             if (hero == null)
+                return;
+
+            if (_isMeleeAttacker && hero.CompareTag(RangeHeroTag))
                 return;
 
             _inMeleeWithHero = true;

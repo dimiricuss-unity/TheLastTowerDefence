@@ -1,32 +1,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TheLastTowerDefence.Enemies.Systems;
+using TheLastTowerDefence.Heroes.Domain;
 
 namespace TheLastTowerDefence.Heroes.Systems
 {
     /// <summary>
-    /// Зона ближнего боя на <c>TriggerForEnemies</c>: в зоне несколько врагов, но бьётся только один,
-    /// выбираемый случайно; после смерти цели выбирается другой живой из зоны. Урон и APS из
-    /// <see cref="CharacterHeroStats"/>, опционально триггер анимации Attack.
-    /// Кулдаун APS отсчитывается от начала атаки (в момент <c>SetTrigger</c>); урон по Animation Event без сдвига таймера.
-    /// Поворот к цели — только в момент начала замаха (перед <c>SetTrigger</c>), не каждый кадр в бою.
-    /// Если в зоне больше никого не было (после того как там уже были враги), через <see cref="idleReturnFacingDelaySeconds"/>
-    /// восстанавливается ориентация как при старте сцены.
+    /// Дальний бой лучника: триггер <c>TriggerForEnemies</c>, в зоне несколько врагов — бьётся тот,
+    /// чей центр дальше всего от позиции героя. APS из <see cref="CharacterHeroStats"/>; урон наносит
+    /// <see cref="HeroBoltProjectile"/> при триггере с этой же целью. Опционально анимация + Animation Event (relay).
     /// </summary>
     [DisallowMultipleComponent]
-    public sealed class CharacterHeroMeleeAttack : MonoBehaviour
+    public sealed class CharacterHeroRangeAttack : MonoBehaviour
     {
         [SerializeField] bool useAttackAnimation = true;
         [SerializeField] string attackTrigger = "Attack";
-        [Tooltip("Урон в кадр события Animation Event (OnAttackDamage) на объекте с Animator. Нужен CharacterHeroMeleeAttackAnimationRelay. Если выключено — урон сразу при срабатывании APS, как раньше.")]
+        [Tooltip("Урон по Animation Event (OnAttackDamage) на объекте с Animator. Нужен CharacterHeroMeleeAttackAnimationRelay. Если выключено — урон сразу по APS.")]
         [SerializeField] bool applyDamageOnAnimationEvent = true;
         [SerializeField] bool faceTarget = true;
-        [Tooltip("Сюда повеси объект со спрайтом/PSB (например CharacterSprite). Его ось +X (красная) будет смотреть на врага. Пусто — ищется дочерний CharacterSprite, иначе крутится корень с Rigidbody2D.")]
+        [Tooltip("Объект со спрайтом (например CharacterSprite). Пусто — дочерний CharacterSprite, иначе корень с Rigidbody2D.")]
         [SerializeField] Transform facingPivot;
-        [Tooltip("Добавка в градусах к углу поворота вокруг мировой Z.")]
         [SerializeField] float rotationOffsetDegrees;
-        [Tooltip("После того как в melee-зоне не осталось врагов, через столько секунд вернуть поворот как при старте сцены.")]
+        [SerializeField] float baseAttackAnimationDurationSeconds = 1f;
         [SerializeField] float idleReturnFacingDelaySeconds = 1f;
+        [Tooltip("Полёт Bolt + след; урон при триггере болта только по выбранной цели.")]
+        [SerializeField] ArrowFlightVfxConfig arrowFlightVfx;
 
         CharacterHeroStats _stats;
         Animator _animator;
@@ -34,7 +32,6 @@ namespace TheLastTowerDefence.Heroes.Systems
         Rigidbody2D _facingRigidbody;
 
         readonly HashSet<EnemyHealth> _enemiesInRange = new HashSet<EnemyHealth>();
-        readonly List<EnemyHealth> _pickRandomBuffer = new List<EnemyHealth>(16);
 
         EnemyHealth _attackTarget;
         float _nextAttackTime;
@@ -42,8 +39,10 @@ namespace TheLastTowerDefence.Heroes.Systems
         bool _damageEventPending;
         EnemyHealth _pendingDamageVictim;
         float _pendingSwingStartedTime;
-        [Tooltip("Если событие анимации не пришло (битый клип), сбросить ожидание и продолжить APS.")]
         [SerializeField] float animationDamageTimeoutSeconds = 2f;
+
+        float _attackAnimatorOriginalSpeed = 1f;
+        bool _attackAnimatorSpeedOverridden;
 
         bool _usePivotInitialFacing;
         Quaternion _initialFacingPivotLocalRotation;
@@ -55,7 +54,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         bool _useRootInitialFacing;
         Quaternion _initialFacingRootWorldRotation;
 
-        bool _hadMeleeEnemyForIdleReturnFacing;
+        bool _hadEnemyInRangeForIdleReturnFacing;
         bool _idleFacingReturnScheduled;
         float _idleFacingReturnAtTime;
 
@@ -81,7 +80,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         void OnDisable()
         {
             _idleFacingReturnScheduled = false;
-            _hadMeleeEnemyForIdleReturnFacing = false;
+            _hadEnemyInRangeForIdleReturnFacing = false;
             foreach (var e in _enemiesInRange)
             {
                 if (e != null)
@@ -114,7 +113,7 @@ namespace TheLastTowerDefence.Heroes.Systems
                 _damageEventPending = false;
                 _pendingDamageVictim = null;
 
-                if (faceTarget && _hadMeleeEnemyForIdleReturnFacing && !_idleFacingReturnScheduled)
+                if (faceTarget && _hadEnemyInRangeForIdleReturnFacing && !_idleFacingReturnScheduled)
                 {
                     _idleFacingReturnScheduled = true;
                     _idleFacingReturnAtTime = Time.time + Mathf.Max(0.01f, idleReturnFacingDelaySeconds);
@@ -143,11 +142,11 @@ namespace TheLastTowerDefence.Heroes.Systems
                 if (_damageEventPending)
                     return;
 
+                BeginAttackAnimation(cooldown);
                 FaceAttackVictim(victim);
                 _damageEventPending = true;
                 _pendingDamageVictim = victim;
                 _pendingSwingStartedTime = Time.time;
-                _nextAttackTime = Time.time + cooldown;
                 _animator.SetTrigger(attackTrigger);
                 return;
             }
@@ -158,7 +157,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
                 _animator.SetTrigger(attackTrigger);
 
-            ApplyDamageToEnemy(victim, damage);
+            TrySpawnBolt(victim, damage);
         }
 
         /// <summary>Вызывается из Animation Event (через <see cref="CharacterHeroMeleeAttackAnimationRelay"/>).</summary>
@@ -176,33 +175,53 @@ namespace TheLastTowerDefence.Heroes.Systems
             var victim = _pendingDamageVictim;
             _pendingDamageVictim = null;
 
+            var cooldown = _stats != null ? 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond) : 0.1f;
+            EndAttackAnimation();
+
             if (_stats == null || !_stats.IsAlive)
                 return;
 
             var damage = _stats.Damage;
             if (damage <= 0f || victim == null)
+            {
+                _nextAttackTime = Time.time + cooldown;
                 return;
+            }
 
             if (!victim.IsAlive || !_enemiesInRange.Contains(victim))
+            {
+                _nextAttackTime = Time.time + cooldown;
                 return;
+            }
 
-            ApplyDamageToEnemy(victim, damage);
+            TrySpawnBolt(victim, damage);
+            _nextAttackTime = Time.time + cooldown;
         }
 
         void CancelPendingSwing(float cooldown)
         {
             _damageEventPending = false;
             _pendingDamageVictim = null;
+            EndAttackAnimation();
             _nextAttackTime = Time.time + cooldown;
         }
 
-        void ApplyDamageToEnemy(EnemyHealth victim, float damage)
+        void TrySpawnBolt(EnemyHealth victim, float damage)
         {
-            if (victim == null || !victim.IsAlive)
+            if (arrowFlightVfx == null || victim == null || !victim.IsAlive || damage <= 0f)
                 return;
 
-            victim.ApplyDamage(damage);
-            Debug.Log($"[Enemy HP after hero hit] {victim.CurrentHealth:F1} / {victim.MaxHealth} (enemy '{victim.name}')");
+            var from = GetBoltSpawnWorldPosition();
+            var to = GetEnemyWorldCenter(victim);
+            HeroBoltProjectile.Spawn(arrowFlightVfx, from, to, victim, damage);
+        }
+
+        Vector3 GetBoltSpawnWorldPosition()
+        {
+            var offset = arrowFlightVfx != null ? arrowFlightVfx.spawnOffsetLocal : Vector2.zero;
+            return _facingRoot != null
+                ? _facingRoot.TransformPoint(new Vector3(offset.x, offset.y, 0f))
+                : transform.position;
         }
 
         void FaceAttackVictim(EnemyHealth victim)
@@ -210,6 +229,29 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (!faceTarget || victim == null || !victim.IsAlive)
                 return;
             FaceTowardWorldPosition(GetEnemyWorldCenter(victim));
+        }
+
+        void BeginAttackAnimation(float cooldown)
+        {
+            if (_animator == null)
+                return;
+
+            if (!_attackAnimatorSpeedOverridden)
+                _attackAnimatorOriginalSpeed = _animator.speed;
+
+            var baseDuration = Mathf.Max(0.01f, baseAttackAnimationDurationSeconds);
+            var desiredCooldown = Mathf.Max(0.01f, cooldown);
+            _animator.speed = baseDuration / desiredCooldown;
+            _attackAnimatorSpeedOverridden = true;
+        }
+
+        void EndAttackAnimation()
+        {
+            if (_animator == null || !_attackAnimatorSpeedOverridden)
+                return;
+
+            _animator.speed = _attackAnimatorOriginalSpeed;
+            _attackAnimatorSpeedOverridden = false;
         }
 
         void CaptureInitialFacing()
@@ -245,7 +287,7 @@ namespace TheLastTowerDefence.Heroes.Systems
 
             RestoreInitialFacing();
             _idleFacingReturnScheduled = false;
-            _hadMeleeEnemyForIdleReturnFacing = false;
+            _hadEnemyInRangeForIdleReturnFacing = false;
         }
 
         void RestoreInitialFacing()
@@ -278,12 +320,10 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (enemy == null)
                 return default;
 
-            // Prefer a collider center so we face the "body" center, not the root/pivot.
             var collider2D = enemy.GetComponentInChildren<Collider2D>();
             if (collider2D != null)
                 return collider2D.bounds.center;
 
-            // Fallback: renderer bounds often match the visible sprite.
             var renderer = enemy.GetComponentInChildren<Renderer>();
             if (renderer != null)
                 return renderer.bounds.center;
@@ -293,28 +333,37 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         void EnsureAttackTarget()
         {
-            if (_attackTarget != null && _attackTarget.IsAlive && _enemiesInRange.Contains(_attackTarget))
-                return;
-
-            PickRandomTarget();
+            PickFarthestTarget();
         }
 
-        void PickRandomTarget()
+        void PickFarthestTarget()
         {
-            _pickRandomBuffer.Clear();
-            foreach (var e in _enemiesInRange)
-            {
-                if (e != null && e.IsAlive)
-                    _pickRandomBuffer.Add(e);
-            }
-
-            if (_pickRandomBuffer.Count == 0)
+            if (_facingRoot == null)
             {
                 _attackTarget = null;
                 return;
             }
 
-            _attackTarget = _pickRandomBuffer[Random.Range(0, _pickRandomBuffer.Count)];
+            var origin = _facingRigidbody != null ? (Vector2)_facingRigidbody.position : (Vector2)_facingRoot.position;
+            EnemyHealth best = null;
+            var bestSqr = -1f;
+            foreach (var e in _enemiesInRange)
+            {
+                if (e == null || !e.IsAlive)
+                    continue;
+
+                var center = GetEnemyWorldCenter(e);
+                var sqr = ((Vector2)center - origin).sqrMagnitude;
+                if (best == null || sqr > bestSqr)
+                {
+                    bestSqr = sqr;
+                    best = e;
+                }
+                else if (Mathf.Approximately(sqr, bestSqr) && e.GetInstanceID() < best.GetInstanceID())
+                    best = e;
+            }
+
+            _attackTarget = best;
         }
 
         void FaceTowardWorldPosition(Vector3 worldPosition)
@@ -327,14 +376,11 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (delta.sqrMagnitude <= 1e-8f)
                 return;
 
-            // Мировой угол Z: ось +X объекта после поворота направлена на цель (2D, вид сверху).
             var angleDeg = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg + rotationOffsetDegrees;
             var rotation = Quaternion.Euler(0f, 0f, angleDeg);
 
             if (facingPivot != null)
             {
-                // Пивот спрайта не в центре персонажа: без сдвига меш «катается» вокруг точки.
-                // Фиксируем в мире точку на facingPivot, которая совпадает с корнем героя (RB).
                 if (facingPivot.IsChildOf(_facingRoot))
                 {
                     var retainLocal = facingPivot.InverseTransformPoint(_facingRoot.position);
@@ -386,14 +432,12 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
 
             health.Died += OnEnemyDied;
-            _hadMeleeEnemyForIdleReturnFacing = true;
-            // Не сдвигать таймер при каждом новом враге: иначе второй вход в зону
-            // «подтягивает» следующий удар раньше APS и получаются два удара подряд.
+            _hadEnemyInRangeForIdleReturnFacing = true;
             if (!_damageEventPending && wasEmpty)
                 _nextAttackTime = Mathf.Min(_nextAttackTime, Time.time);
 
             if (_attackTarget == null || !_attackTarget.IsAlive || !_enemiesInRange.Contains(_attackTarget))
-                PickRandomTarget();
+                EnsureAttackTarget();
         }
 
         void TryRemoveEnemy(Collider2D other)
@@ -434,8 +478,8 @@ namespace TheLastTowerDefence.Heroes.Systems
         }
 
         /// <summary>
-        /// Доля оставшегося кулдауна до следующего удара (1 = полный интервал APS; 0 = готов).
-        /// Таймер стартует с начала атаки (<see cref="_nextAttackTime"/> выставляется вместе с <c>SetTrigger</c>).
+        /// Доля оставшегося кулдауна до следующего выстрела (1 = полный интервал APS; 0 = готов).
+        /// Пока ждём Animation Event, для UI считаем полный кулдаун.
         /// </summary>
         public float AttackCooldownRemaining01
         {
@@ -444,6 +488,8 @@ namespace TheLastTowerDefence.Heroes.Systems
                 if (_stats == null)
                     return 0f;
                 var cd = 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond);
+                if (_damageEventPending)
+                    return 1f;
                 var rem = Mathf.Max(0f, _nextAttackTime - Time.time);
                 return Mathf.Clamp01(rem / cd);
             }

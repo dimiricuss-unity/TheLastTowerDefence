@@ -8,5 +8,8 @@ namespace TheLastTowerDefence.Enemies.Domain
         [Min(1f)] public float maxHealth = 50f;
         [Min(0f)] public float damage = 5f;
         [Min(0.01f)] public float attacksPerSecond = 1f;
+
+        [Tooltip("Ближний враг: контактный урон по героям с тегом RangeHero не наносится. Снимите для дальнобойного врага.")]
+        public bool isMeleeAttacker = true;
     }
 }
