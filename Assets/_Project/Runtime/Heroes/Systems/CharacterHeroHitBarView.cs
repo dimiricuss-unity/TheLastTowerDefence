@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using TheLastTowerDefence.UI;
 
 namespace TheLastTowerDefence.Heroes.Systems
 {
@@ -43,15 +44,7 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         void Update()
         {
-            if (whiteBar == null || greenBar == null)
-                return;
-
-            var target = greenBar.fillAmount;
-            var t = 1f - Mathf.Exp(-whiteCatchUpSpeed * Time.deltaTime);
-            var next = Mathf.Lerp(whiteBar.fillAmount, target, t);
-            if (Mathf.Abs(next - target) < 0.0005f)
-                next = target;
-            whiteBar.fillAmount = next;
+            UiFilledImageCatchUp.Tick(whiteBar, greenBar, whiteCatchUpSpeed);
         }
 
         void OnHealthChanged(float current, float max)

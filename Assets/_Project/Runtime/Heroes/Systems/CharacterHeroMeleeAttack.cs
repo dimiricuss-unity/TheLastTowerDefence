@@ -27,6 +27,8 @@ namespace TheLastTowerDefence.Heroes.Systems
         [SerializeField] float rotationOffsetDegrees;
         [Tooltip("После того как в melee-зоне не осталось врагов, через столько секунд вернуть поворот как при старте сцены.")]
         [SerializeField] float idleReturnFacingDelaySeconds = 1f;
+        [Tooltip("Если зона 0→1 снова быстрее этого интервала после выхода последнего врага, не сдвигать _nextAttackTime в «сейчас» — иначе мерцание триггера (поворот/физика) даёт второй удар подряд без APS.")]
+        [SerializeField, Min(0f)] float reentryCooldownPullGraceSeconds = 0.12f;
 
         CharacterHeroStats _stats;
         Animator _animator;
@@ -58,6 +60,9 @@ namespace TheLastTowerDefence.Heroes.Systems
         bool _hadMeleeEnemyForIdleReturnFacing;
         bool _idleFacingReturnScheduled;
         float _idleFacingReturnAtTime;
+
+        /// <summary>Время, когда в зоне не осталось ни одного врага (для отличия реального «пусто» от краткого выхода из триггера).</summary>
+        float _zoneLastBecameEmptyTime = float.NegativeInfinity;
 
         void Awake()
         {
@@ -92,6 +97,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             _attackTarget = null;
             _damageEventPending = false;
             _pendingDamageVictim = null;
+            _zoneLastBecameEmptyTime = float.NegativeInfinity;
         }
 
         void Update()
@@ -389,7 +395,9 @@ namespace TheLastTowerDefence.Heroes.Systems
             _hadMeleeEnemyForIdleReturnFacing = true;
             // Не сдвигать таймер при каждом новом враге: иначе второй вход в зону
             // «подтягивает» следующий удар раньше APS и получаются два удара подряд.
-            if (!_damageEventPending && wasEmpty)
+            // Краткий 0→1 после OnTriggerExit (мерцание) не должен сбрасывать кулдаун — см. reentryCooldownPullGraceSeconds.
+            if (!_damageEventPending && wasEmpty &&
+                Time.time - _zoneLastBecameEmptyTime >= reentryCooldownPullGraceSeconds)
                 _nextAttackTime = Mathf.Min(_nextAttackTime, Time.time);
 
             if (_attackTarget == null || !_attackTarget.IsAlive || !_enemiesInRange.Contains(_attackTarget))
@@ -421,6 +429,8 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             health.Died -= OnEnemyDied;
             _enemiesInRange.Remove(health);
+            if (_enemiesInRange.Count == 0)
+                _zoneLastBecameEmptyTime = Time.time;
         }
 
         void OnEnemyDied(EnemyHealth health)
@@ -429,6 +439,8 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             health.Died -= OnEnemyDied;
             _enemiesInRange.Remove(health);
+            if (_enemiesInRange.Count == 0)
+                _zoneLastBecameEmptyTime = Time.time;
             if (health == _attackTarget)
                 _attackTarget = null;
         }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7168528526371687867}
   - component: {fileID: 669924552510715591}
   m_Layer: 0
-  m_Name: archer1
+  m_Name: cleric
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,13 +25,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1429994998486796976}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.000000014901161, z: 0}
   m_LocalScale: {x: 1.2784, y: 1.2031, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 126446929824880810}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!212 &669924552510715591
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 21
-  m_Sprite: {fileID: 21300000, guid: e6f4686da26510c438ae6d5eed42d7e7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 72043b37c1ad65f45bd36a579126527d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -95,8 +95,9 @@ GameObject:
   - component: {fileID: 7719893086987036099}
   - component: {fileID: 3452330366146124192}
   - component: {fileID: 4520712566048097033}
+  - component: {fileID: 8398712902169699309}
   m_Layer: 0
-  m_Name: Archer
+  m_Name: Cleric
   m_TagString: RangeHero
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +132,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b98010a79b88dc947b45b01f81391ad5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: 078705e50c4f25345957e5eb1266acc0, type: 2}
+  config: {fileID: 11400000, guid: 7d9a6b25c8ebfe54fbb159bd0b2475dc, type: 2}
 --- !u!50 &4520712566048097033
 Rigidbody2D:
   serializedVersion: 4
@@ -159,6 +160,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &8398712902169699309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4967841628790050976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da6b93c2e3c8dd04290a2b2c24685498, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activeHealSpell: {fileID: 11400000, guid: 8305fa176cec76541b09de6f13f75201, type: 2}
+  knight: {fileID: 0}
 --- !u!1 &6834767401504743206
 GameObject:
   m_ObjectHideFlags: 0
@@ -184,7 +199,7 @@ Transform:
   m_GameObject: {fileID: 6834767401504743206}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.505, y: -0.169, z: 0}
+  m_LocalPosition: {x: 1.11, y: 1.01, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -235,7 +250,7 @@ GameObject:
   - component: {fileID: 565300484076691331}
   - component: {fileID: 378992670120225568}
   - component: {fileID: 8945848899150319175}
-  m_Layer: 8
+  m_Layer: 13
   m_Name: TriggerForEnemies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,8 +304,8 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 6.53, y: -2.11371e-14}
-  m_Size: {x: 15.074755, y: 10.660899}
+  m_Offset: {x: 5.015337, y: 0.00000035579973}
+  m_Size: {x: 12.045466, y: 10.660917}
   m_Direction: 1
 --- !u!114 &378992670120225568
 MonoBehaviour:
@@ -324,7 +339,8 @@ MonoBehaviour:
   rotationOffsetDegrees: 0
   baseAttackAnimationDurationSeconds: 1
   idleReturnFacingDelaySeconds: 1
-  arrowFlightVfx: {fileID: 11400000, guid: 6c629ca3c37dde94dad88909642246f1, type: 2}
+  arrowFlightVfx: {fileID: 11400000, guid: 400573ccd5848ec4a837fd8d96bad9e8, type: 2}
   shootPoint: {fileID: 1636615010896950831}
   reentryCooldownPullGraceSeconds: 0.12
+  clericMagic: {fileID: 8398712902169699309}
   animationDamageTimeoutSeconds: 2

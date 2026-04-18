@@ -90,6 +90,11 @@
    <NumberFormat/>
    <Protection/>
   </Style>
+  <Style ss:ID="s84">
+   <Font ss:FontName="Calibri" x:CharSet="204" x:Family="Swiss" ss:Size="11"
+    ss:Color="#000000" ss:Bold="1"/>
+   <Interior ss:Color="#D0CECE" ss:Pattern="Solid"/>
+  </Style>
  </Styles>
  <Worksheet ss:Name="Характеристики">
   <Table ss:ExpandedColumnCount="7" ss:ExpandedRowCount="24" x:FullColumns="1"
@@ -125,16 +130,13 @@
     <Cell><Data ss:Type="String"></Data></Cell>
     <Cell ss:StyleID="s66"><Data ss:Type="String">Параметры</Data></Cell>
     <Cell ss:StyleID="s66"><Data ss:Type="String">Значения</Data></Cell>
-    <Cell><Data ss:Type="String"></Data></Cell>
-    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">Параметры</Data></Cell>
+    <Cell ss:StyleID="s84"><Data ss:Type="String">Значения</Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
-    <Cell><Data ss:Type="String">Персонаж (экран)</Data></Cell>
-    <Cell><Data ss:Type="String">Рыцарь</Data></Cell>
-    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell ss:Index="3"><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String">Название</Data></Cell>
-    <Cell><Data ss:Type="String">Солдатские топор</Data></Cell>
-    <Cell><Data ss:Type="String"></Data></Cell>
+    <Cell ss:Index="6"><Data ss:Type="String"></Data></Cell>
     <Cell><Data ss:Type="String"></Data></Cell>
    </Row>
    <Row ss:AutoFitHeight="0">
@@ -304,12 +306,11 @@
     <VerticalResolution>600</VerticalResolution>
    </Print>
    <Selected/>
-   <TopRowVisible>6</TopRowVisible>
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>9</ActiveRow>
-     <ActiveCol>4</ActiveCol>
+     <ActiveRow>28</ActiveRow>
+     <ActiveCol>3</ActiveCol>
     </Pane>
    </Panes>
    <ProtectObjects>False</ProtectObjects>

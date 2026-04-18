@@ -7,6 +7,7 @@ namespace TheLastTowerDefence.Enemies.Systems
     /// <summary>
     /// Движение к цели через <see cref="Rigidbody2D.AddForce"/> и поворот через
     /// <see cref="Rigidbody2D.MoveRotation"/> (шаг симуляции — <see cref="FixedUpdate"/>).
+    /// Опционально после спавна можно задать промежуточную точку (<see cref="SetInitialApproachTarget"/>), пока не достигнута — идём к ней, затем к башне / герою как обычно.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody2D))]
@@ -21,9 +22,15 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] float acceleration = 16f;
         [Tooltip("Ограничение силы steering-импульса за шаг физики.")]
         [SerializeField] float maxSteeringForce = 24f;
+        [Tooltip("Радиус достижения промежуточной точки после спавна (world space, 2D).")]
+        [SerializeField, Min(0.01f)] float approachArrivalRadius = 0.22f;
 
         Rigidbody2D _rb;
         Transform _target;
+        Transform _towerTransform;
+        Transform _approachWaypoint;
+        bool _approachCompleted = true;
+        Transform _focusHero;
         Animator _animator;
         EnemyAttack _attack;
         bool _configured;
@@ -37,17 +44,59 @@ namespace TheLastTowerDefence.Enemies.Systems
             if (_rb == null)
                 _rb = GetComponent<Rigidbody2D>();
 
-            _target = combatTarget;
+            _towerTransform = combatTarget;
+            _approachWaypoint = null;
+            _approachCompleted = true;
+            _focusHero = null;
+            RecalculateChaseTarget();
             _configured = true;
             SnapFacingTowardTarget();
         }
 
-        /// <summary>Переключение цели преследования (башня / герой) из <see cref="EnemyHeroFocus"/>.</summary>
-        public void SetChaseTarget(Transform chaseTarget)
+        /// <summary>
+        /// Вызывается с <see cref="EnemySpawnPoint"/> сразу после Instantiate: сначала движение к этой точке, затем прежняя логика (башня / фокус героя).
+        /// </summary>
+        public void SetInitialApproachTarget(Transform waypoint)
         {
-            _target = chaseTarget;
+            if (!_configured || waypoint == null || _towerTransform == null)
+                return;
+
+            _approachWaypoint = waypoint;
+            _approachCompleted = false;
+            RecalculateChaseTarget();
+            SnapFacingTowardTarget();
+        }
+
+        /// <summary>Из <see cref="EnemyHeroFocus"/>: преследовать героя в зоне угрозы.</summary>
+        public void SetFocusHeroTarget(Transform heroTransform)
+        {
+            _focusHero = heroTransform;
             if (_configured)
+            {
+                RecalculateChaseTarget();
                 SnapFacingTowardTarget();
+            }
+        }
+
+        /// <summary>Из <see cref="EnemyHeroFocus"/>: отпустить героя и вернуться к башне / незавершённому подходу.</summary>
+        public void ClearFocusHeroTarget()
+        {
+            _focusHero = null;
+            if (_configured)
+            {
+                RecalculateChaseTarget();
+                SnapFacingTowardTarget();
+            }
+        }
+
+        void RecalculateChaseTarget()
+        {
+            if (_focusHero != null)
+                _target = _focusHero;
+            else if (!_approachCompleted && _approachWaypoint != null)
+                _target = _approachWaypoint;
+            else
+                _target = _towerTransform;
         }
 
         void Awake()
@@ -76,6 +125,8 @@ namespace TheLastTowerDefence.Enemies.Systems
         {
             if (!_configured || _target == null)
                 return;
+
+            TryCompleteApproachPhase();
 
             if (_attack != null && _attack.IsEngagingInMelee)
             {
@@ -143,6 +194,23 @@ namespace TheLastTowerDefence.Enemies.Systems
                 var speed = velocity.magnitude;
                 _animator.SetFloat(speedFloatParameter, speed);
             }
+        }
+
+        void TryCompleteApproachPhase()
+        {
+            if (_approachCompleted || _approachWaypoint == null || _focusHero != null)
+                return;
+
+            var r = Mathf.Max(0.01f, approachArrivalRadius);
+            var rSqr = r * r;
+            var toWp = (Vector2)_approachWaypoint.position - _rb.position;
+            if (toWp.sqrMagnitude > rSqr)
+                return;
+
+            _approachCompleted = true;
+            _approachWaypoint = null;
+            RecalculateChaseTarget();
+            SnapFacingTowardTarget();
         }
     }
 }

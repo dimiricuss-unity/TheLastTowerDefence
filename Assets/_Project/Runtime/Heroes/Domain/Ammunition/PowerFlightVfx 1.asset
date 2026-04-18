@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f3e9a1b2c4d5e6f8a9b0c1d2e3f4a5b, type: 3}
+  m_Name: PowerFlightVfx 1
+  m_EditorClassIdentifier: 
+  boltPrefab: {fileID: 5867925581908708190, guid: 5c2a5b15a6dfaca4c8c2a9ee3ad9d0ee, type: 3}
+  flySpeed: 13
+  maxTravelDistanceFactor: 2.75
+  arcHeightWorld: 0
+  spawnOffsetLocal: {x: 0.42, y: 0.18}
+  boltRotationOffsetDegrees: -90
+  trailStartColor: {r: 0, g: 0.76249933, b: 1, a: 0.5}
+  trailEndColor: {r: 0, g: 0.7607843, b: 1, a: 0}
+  trailWidthStart: 0.5
+  trailWidthEnd: 0.2
+  trailTime: 0.12
+  trailMinVertexDistance: 0.035
+  destroyDelayAfterHit: 0.45
+  embedDistanceAfterHitWorld: 0.45

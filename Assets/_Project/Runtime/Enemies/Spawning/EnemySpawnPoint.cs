@@ -1,3 +1,4 @@
+using TheLastTowerDefence.Enemies.Systems;
 using UnityEngine;
 
 namespace TheLastTowerDefence.Enemies.Spawning
@@ -10,6 +11,8 @@ namespace TheLastTowerDefence.Enemies.Spawning
     {
         [SerializeField] GameObject enemyPrefab;
         [SerializeField] bool spawnOnStart = true;
+        [Tooltip("Если задано, заспавненный враг сначала идёт к этой точке (world), затем — к башне / герою как обычно. Пусто — сразу к башне.")]
+        [SerializeField] Transform initialChaseTarget;
 
         void Start()
         {
@@ -28,7 +31,19 @@ namespace TheLastTowerDefence.Enemies.Spawning
                 return;
             }
 
-            Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+            var instance = Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+            if (initialChaseTarget == null)
+                return;
+
+            var movement = instance.GetComponent<EnemyMovement>();
+            if (movement == null)
+                movement = instance.GetComponentInChildren<EnemyMovement>(true);
+            if (movement != null)
+                movement.SetInitialApproachTarget(initialChaseTarget);
+            else
+                Debug.LogWarning(
+                    $"[{nameof(EnemySpawnPoint)}] Задан {nameof(initialChaseTarget)}, но на префабе нет {nameof(EnemyMovement)} ('{name}').",
+                    this);
         }
     }
 }

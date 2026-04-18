@@ -9,6 +9,8 @@ namespace TheLastTowerDefence.Heroes.Systems
     /// Дальний бой лучника: триггер <c>TriggerForEnemies</c>, в зоне несколько врагов — бьётся тот,
     /// чей центр дальше всего от позиции героя. APS из <see cref="CharacterHeroStats"/>; урон наносит
     /// <see cref="HeroBoltProjectile"/> при триггере с этой же целью. Опционально анимация + Animation Event (relay).
+    /// Вылет стрелы — из <c>ShootPoint</c> (поле <see cref="shootPoint"/> или дочерний объект с таким именем), иначе из <see cref="ArrowFlightVfxConfig.spawnOffsetLocal"/>.
+    /// Опционально <see cref="clericMagic"/>: приоритет лечения рыцаря тем же APS (без поворота к цели лечения).
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CharacterHeroRangeAttack : MonoBehaviour
@@ -25,6 +27,12 @@ namespace TheLastTowerDefence.Heroes.Systems
         [SerializeField] float idleReturnFacingDelaySeconds = 1f;
         [Tooltip("Полёт Bolt + след; урон при триггере болта только по выбранной цели.")]
         [SerializeField] ArrowFlightVfxConfig arrowFlightVfx;
+        [Tooltip("Точка вылета стрелы (например дочерний ShootPoint на префабе). Пусто — ищется Transform с именем ShootPoint под героем, иначе позиция из spawnOffsetLocal в ArrowFlightVfx.")]
+        [SerializeField] Transform shootPoint;
+        [Tooltip("См. CharacterHeroMeleeAttack: не сбрасывать кулдаун при кратком 0→1 зоны после мерцания триггера.")]
+        [SerializeField, Min(0f)] float reentryCooldownPullGraceSeconds = 0.12f;
+        [Tooltip("Для клирика: приоритет лечения рыцаря вместо выстрела по тем же тикам APS.")]
+        [SerializeField] CharacterClericMagic clericMagic;
 
         CharacterHeroStats _stats;
         Animator _animator;
@@ -58,6 +66,12 @@ namespace TheLastTowerDefence.Heroes.Systems
         bool _idleFacingReturnScheduled;
         float _idleFacingReturnAtTime;
 
+        float _zoneLastBecameEmptyTime = float.NegativeInfinity;
+
+        Transform _resolvedShootPoint;
+
+        bool _clericHealSwingPending;
+
         void Awake()
         {
             _stats = GetComponentInParent<CharacterHeroStats>();
@@ -70,6 +84,26 @@ namespace TheLastTowerDefence.Heroes.Systems
                 if (found != null)
                     facingPivot = found;
             }
+
+            _resolvedShootPoint = shootPoint;
+            if (_resolvedShootPoint == null)
+                _resolvedShootPoint = FindShootPointInHierarchy(_facingRoot);
+
+            if (clericMagic == null && _stats != null)
+                clericMagic = _stats.GetComponentInChildren<CharacterClericMagic>(true);
+        }
+
+        static Transform FindShootPointInHierarchy(Transform root)
+        {
+            if (root == null)
+                return null;
+            foreach (var t in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (t.name == "ShootPoint")
+                    return t;
+            }
+
+            return null;
         }
 
         void Start()
@@ -91,6 +125,8 @@ namespace TheLastTowerDefence.Heroes.Systems
             _attackTarget = null;
             _damageEventPending = false;
             _pendingDamageVictim = null;
+            _clericHealSwingPending = false;
+            _zoneLastBecameEmptyTime = float.NegativeInfinity;
         }
 
         void Update()
@@ -106,6 +142,18 @@ namespace TheLastTowerDefence.Heroes.Systems
             var cooldown = 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond);
             if (_damageEventPending && Time.time - _pendingSwingStartedTime > animationDamageTimeoutSeconds)
                 CancelPendingSwing(cooldown);
+
+            var healFirst = clericMagic != null && clericMagic.ShouldPrioritizeHealing();
+            if (healFirst && _damageEventPending && !_clericHealSwingPending)
+                CancelPendingSwing(cooldown);
+            if (!healFirst && _clericHealSwingPending)
+                CancelPendingSwing(cooldown);
+
+            if (healFirst)
+            {
+                TryHealingPriorityUpdate(cooldown);
+                return;
+            }
 
             if (_enemiesInRange.Count == 0)
             {
@@ -160,6 +208,36 @@ namespace TheLastTowerDefence.Heroes.Systems
             TrySpawnBolt(victim, damage);
         }
 
+        void TryHealingPriorityUpdate(float cooldown)
+        {
+            if (Time.time < _nextAttackTime)
+                return;
+
+            var useEvent = applyDamageOnAnimationEvent && useAttackAnimation && _animator != null &&
+                           !string.IsNullOrEmpty(attackTrigger);
+
+            if (useEvent)
+            {
+                if (_damageEventPending)
+                    return;
+
+                BeginAttackAnimation(cooldown);
+                _clericHealSwingPending = true;
+                _damageEventPending = true;
+                _pendingDamageVictim = null;
+                _pendingSwingStartedTime = Time.time;
+                _animator.SetTrigger(attackTrigger);
+                return;
+            }
+
+            if (!clericMagic.TryPerformHeal())
+                return;
+
+            _nextAttackTime = Time.time + cooldown;
+            if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
+                _animator.SetTrigger(attackTrigger);
+        }
+
         /// <summary>Вызывается из Animation Event (через <see cref="CharacterHeroMeleeAttackAnimationRelay"/>).</summary>
         public void OnAttackDamageAnimationEvent()
         {
@@ -170,6 +248,31 @@ namespace TheLastTowerDefence.Heroes.Systems
         {
             if (!_damageEventPending)
                 return;
+
+            if (_clericHealSwingPending)
+            {
+                _clericHealSwingPending = false;
+                _damageEventPending = false;
+                _pendingDamageVictim = null;
+
+                var healCooldown = _stats != null ? 1f / Mathf.Max(0.01f, _stats.AttacksPerSecond) : 0.1f;
+                EndAttackAnimation();
+
+                if (_stats == null || !_stats.IsAlive)
+                {
+                    _nextAttackTime = Time.time + healCooldown;
+                    return;
+                }
+
+                if (clericMagic == null || !clericMagic.TryPerformHeal())
+                {
+                    _nextAttackTime = Time.time + healCooldown;
+                    return;
+                }
+
+                _nextAttackTime = Time.time + healCooldown;
+                return;
+            }
 
             _damageEventPending = false;
             var victim = _pendingDamageVictim;
@@ -200,6 +303,7 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         void CancelPendingSwing(float cooldown)
         {
+            _clericHealSwingPending = false;
             _damageEventPending = false;
             _pendingDamageVictim = null;
             EndAttackAnimation();
@@ -218,6 +322,9 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         Vector3 GetBoltSpawnWorldPosition()
         {
+            if (_resolvedShootPoint != null)
+                return _resolvedShootPoint.position;
+
             var offset = arrowFlightVfx != null ? arrowFlightVfx.spawnOffsetLocal : Vector2.zero;
             return _facingRoot != null
                 ? _facingRoot.TransformPoint(new Vector3(offset.x, offset.y, 0f))
@@ -433,7 +540,8 @@ namespace TheLastTowerDefence.Heroes.Systems
 
             health.Died += OnEnemyDied;
             _hadEnemyInRangeForIdleReturnFacing = true;
-            if (!_damageEventPending && wasEmpty)
+            if (!_damageEventPending && wasEmpty &&
+                Time.time - _zoneLastBecameEmptyTime >= reentryCooldownPullGraceSeconds)
                 _nextAttackTime = Mathf.Min(_nextAttackTime, Time.time);
 
             if (_attackTarget == null || !_attackTarget.IsAlive || !_enemiesInRange.Contains(_attackTarget))
@@ -465,6 +573,8 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             health.Died -= OnEnemyDied;
             _enemiesInRange.Remove(health);
+            if (_enemiesInRange.Count == 0)
+                _zoneLastBecameEmptyTime = Time.time;
         }
 
         void OnEnemyDied(EnemyHealth health)
@@ -473,6 +583,8 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             health.Died -= OnEnemyDied;
             _enemiesInRange.Remove(health);
+            if (_enemiesInRange.Count == 0)
+                _zoneLastBecameEmptyTime = Time.time;
             if (health == _attackTarget)
                 _attackTarget = null;
         }

@@ -77,8 +77,10 @@ namespace TheLastTowerDefence.Enemies.Systems
             if (movement == null)
                 return;
 
-            var chase = _heroInZone != null && _heroInZone.IsAlive ? _heroInZone.transform : _tower;
-            movement.SetChaseTarget(chase);
+            if (_heroInZone != null && _heroInZone.IsAlive)
+                movement.SetFocusHeroTarget(_heroInZone.transform);
+            else
+                movement.ClearFocusHeroTarget();
         }
     }
 }
