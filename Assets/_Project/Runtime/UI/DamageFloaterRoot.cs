@@ -22,6 +22,7 @@ namespace TheLastTowerDefence.UI
         [SerializeField, Range(0f, 1f)] float fadeStartNormalized = 0.38f;
         [SerializeField] float spawnYOffsetWorld = 0.04f;
         [SerializeField] Color damageTextColor = new Color(1f, 0.92f, 0.35f, 1f);
+        [SerializeField] Color criticalDamageTextColor = new Color(1f, 0.55f, 0.08f, 1f);
         [SerializeField, Min(1f)] float damageTextFontSize = 44f;
 
         readonly Stack<DamageFloaterInstance> _pool = new Stack<DamageFloaterInstance>();
@@ -67,21 +68,23 @@ namespace TheLastTowerDefence.UI
         }
 
         /// <summary>Вызывается из <see cref="EnemyHealth.ApplyDamage"/>.</summary>
-        public static void ShowAtEnemy(EnemyHealth health, float damage)
+        public static void ShowAtEnemy(EnemyHealth health, float damage, bool isCritical = false)
         {
             if (health == null || damage <= 0f || Instance == null)
                 return;
 
-            Instance.SpawnInternal(Instance.ComputeSpawnWorldPosition(health), damage);
+            Instance.SpawnInternal(Instance.ComputeSpawnWorldPosition(health), damage, isCritical);
         }
 
-        void SpawnInternal(Vector3 worldPosition, float amount)
+        internal Color GetTextColorForHit(bool isCritical) => isCritical ? criticalDamageTextColor : damageTextColor;
+
+        void SpawnInternal(Vector3 worldPosition, float amount, bool isCritical)
         {
             var inst = _pool.Count > 0 ? _pool.Pop() : CreateFloater();
             var rt = (RectTransform)inst.transform;
             rt.position = worldPosition;
             inst.gameObject.SetActive(true);
-            inst.Play(amount);
+            inst.Play(amount, isCritical);
         }
 
         internal void ReturnToPool(DamageFloaterInstance inst)
@@ -181,15 +184,16 @@ namespace TheLastTowerDefence.UI
             }
         }
 
-        public void Play(float damageAmount)
+        public void Play(float damageAmount, bool isCritical = false)
         {
             StopPlayback();
-            _co = StartCoroutine(PlayRoutine(damageAmount));
+            _co = StartCoroutine(PlayRoutine(damageAmount, isCritical));
         }
 
-        IEnumerator PlayRoutine(float damage)
+        IEnumerator PlayRoutine(float damage, bool isCritical)
         {
             _tmp.text = Mathf.RoundToInt(damage).ToString();
+            _tmp.color = _root.GetTextColorForHit(isCritical);
             _cg.alpha = 1f;
 
             var start = _rt.position;

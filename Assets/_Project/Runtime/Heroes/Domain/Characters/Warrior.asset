@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a335be8a9e3d1474891cc10a665ebc0b, type: 3}
   m_Name: Warrior
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  damage: 10
-  attacksPerSecond: 1
-  mana: 0
+  weapon: {fileID: 11400000, guid: 91b6e3c45d2a4f1089a7c1e2f3b4d508, type: 2}
+  level: 1
+  strength: 9
+  dexterity: 7
+  stamina: 9
+  intelligence: 5
+  willpower: 5
+  luck: 5

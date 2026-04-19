@@ -1,5 +1,6 @@
 using UnityEngine;
 using TheLastTowerDefence.Heroes.Domain;
+using TheLastTowerDefence.UI;
 
 namespace TheLastTowerDefence.Heroes.Systems
 {
@@ -14,7 +15,11 @@ namespace TheLastTowerDefence.Heroes.Systems
         [SerializeField] ClericHealSpellConfig activeHealSpell;
         [SerializeField] CharacterHeroStats knight;
 
+        [Tooltip("Плюс HP на Knight_icon. Пусто — ищется первый KnightHealHitPlusView на сцене.")]
+        [SerializeField] KnightHealHitPlusView knightHealHitPlus;
+
         CharacterHeroStats _cleric;
+        KnightHealHitPlusView _resolvedHealPlus;
 
         void Awake()
         {
@@ -51,8 +56,23 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (!_cleric.TryConsumeMana(activeHealSpell.manaCost))
                 return false;
 
-            knight.RestoreHealth(activeHealSpell.healAmount);
+            var applied = knight.RestoreHealth(activeHealSpell.healAmount);
+            if (applied > 0f)
+                ResolveKnightHealHitPlus()?.ShowHealAmount(applied);
+
             return true;
+        }
+
+        KnightHealHitPlusView ResolveKnightHealHitPlus()
+        {
+            if (knightHealHitPlus != null)
+                return knightHealHitPlus;
+            if (_resolvedHealPlus != null)
+                return _resolvedHealPlus;
+
+            var all = Object.FindObjectsByType<KnightHealHitPlusView>(FindObjectsSortMode.None);
+            _resolvedHealPlus = all != null && all.Length > 0 ? all[0] : null;
+            return _resolvedHealPlus;
         }
     }
 }

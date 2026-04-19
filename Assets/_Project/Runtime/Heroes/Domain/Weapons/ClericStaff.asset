@@ -9,14 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a335be8a9e3d1474891cc10a665ebc0b, type: 3}
-  m_Name: Cleric
+  m_Script: {fileID: 11500000, guid: 4c8f2a91b0d3449582e1f7a6c3d9b12e, type: 3}
+  m_Name: ClericStaff
   m_EditorClassIdentifier: 
-  weapon: {fileID: 11400000, guid: 946a1f42cfcc2a04a85976d42ab78865, type: 2}
-  level: 1
-  strength: 5
-  dexterity: 5
-  stamina: 5
-  intelligence: 9
-  willpower: 9
-  luck: 7
+  weaponDisplayName: "\u041F\u043E\u0441\u043E\u0445 \u043A\u043B\u0438\u0440\u0438\u043A\u0430"
+  weaponType: 2
+  minDamage: 2
+  maxDamage: 3
+  attacksPerSecond: 0.5
+  critModifier: 1

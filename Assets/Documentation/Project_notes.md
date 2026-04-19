@@ -13,12 +13,22 @@
 
 ## Журнал
 
+### 2026-04-19
+
+- **Таблица Character_stats → код:** папка `Assets/_Project/Runtime/Formulas/` — `CharacterFormulaInputs.cs` (`CharacterCoreStats`, `CharacterStatModifiers`, `CharacterWeaponStats`), `CharacterStatFormulas.cs` (HP, мана, реген маны, крит %, APS, мин/макс урон, крит-урон; `ExcelIntDown` под INT таблицы). Документ-источник: `Assets/Documentation/Character_stats.xml`.
+- **HeroStatsConfig:** только базовые статы + уровень; поле ссылки **`weapon`** → **`HeroWeaponConfig`** (`HeroWeaponKind` включая `Staff`). Боевые числа не хранятся в SO — считает **`CharacterHeroStats.ApplyDerivedStats()`** (оружие из конфига, fallback `TableExampleDefaults` при пустом/битом APS; при пересборке HP/мана пропорционально сохраняют долю).
+- **Ассеты героев и оружия:** разнесённые билды Warrior / Archer / Cleric в `Assets/_Project/Runtime/Heroes/Domain/Characters/*.asset`; оружие `Weapons/StarterWeapon_Table`, `StarterBow_Table`, `ClericStaff_Table` (цифры как в примере таблицы 6/8/0.9/1).
+- **UI спавн (актуальная логика):** `SpawnEnemiesButton` — **один** враг за клик, точки — **активные** дочерние `EnemySpawnPoint` под **`spawnPointsRoot`** (сцена: `SpawnPoints`), порядок по иерархии, **round-robin** (`_nextSpawnIndex`). Fallback по имени `SpawnPoints`. См. компонент на `SpawnButton` в `BaseScene`.
+- **Крит и флоатер урона:** `CharacterHeroStats.SampleStrikeDamage(out isCritical)` — бросок по `CritChancePercent`, урон из крит-диапазона или обычного min–max; **`EnemyHealth.ApplyDamage(amount, criticalHit)`** → **`DamageFloaterRoot.ShowAtEnemy(..., isCritical)`**; цвет крита — поле **`criticalDamageTextColor`** (оранжевый по умолчанию). Мили/лук/болт передают флаг крита.
+- **Лечение рыцаря — цифра +HP на Knight_icon:** **`KnightHealHitPlusView`** (`Assets/_Project/Runtime/UI/KnightHealHitPlusView.cs`) на `Knight_icon` в `BaseScene` — поле **`hitPlus`** (TMP) или поиск объекта **`HitPlus`**; **`RestoreHealth`** возвращает **фактически восстановленный** HP; **`CharacterClericMagic.TryPerformHeal`** после хила вызывает **`ShowHealAmount`** (опционально ссылка `knightHealHitPlus`, иначе `FindObjectsByType`). Анимация: **корутина** (вверх по anchoredPosition + fade), без DOTween (сборка Runtime без ссылки на DOTween).
+- **Прочее:** `UnityEngine.Random` в `SampleStrikeDamage` через полное имя из-за `using System`; у `HeroBoltProjectile` восстановлен `using Heroes.Domain` для `ArrowFlightVfxConfig`.
+
 ### 2026-04-17
 
 - **Лучник отдельно от рыцаря:** `CharacterHeroRangeAttack` (`Assets/_Project/Runtime/Heroes/Systems/CharacterHeroRangeAttack.cs`) — зона как у мили, цель всегда **самый дальний** `EnemyHealth` от героя; урон не в момент выстрела, а при **попадании болта** (`HeroBoltProjectile`). С префаба `Archer` снят `CharacterHeroMeleeAttack`. `CharacterHeroMeleeAttackAnimationRelay` вызывает мили **или** range (`else if`).
 - **Полёт стрелы и SO:** `ArrowFlightVfxConfig` + ассет `Assets/_Project/Runtime/Heroes/Domain/ArrowFlightVfx.asset` — префаб Bolt, `flySpeed`, `maxTravelDistanceFactor`, след TrailRenderer (в коде: `LineAlignment.TransformZ`, материал `Sprites/Default`, порядок отрисовки), `embedDistanceAfterHitWorld` (добег «в плоть» после урона), `destroyDelayAfterHit`. `HeroBoltProjectile` — прямой полёт в `FixedUpdate` через **Kinematic Rigidbody2D**, `OnTriggerEnter2D` только если `EnemyHealth` **совпадает** с целью выстрела (чужие враги по пути игнорируются); урон один раз, коллайдер болта отключается сразу после хита.
 - **Reload UI:** `CharacterHeroReloadBarView` на `Knight_icon` / `Archer_icon` — `Image.fillAmount = 1 - AttackCooldownRemaining01` (полная полоска = готов к удару). У `CharacterHeroMeleeAttack` и `CharacterHeroRangeAttack` добавлено публичное свойство **`AttackCooldownRemaining01`** (учёт `_damageEventPending` для UI). Автопоиск `ReloadBar/.../WhiteBar`, привязка героя по имени иконки / тегу `RangeHero` или один `CharacterHeroStats` на сцене.
-- **UI спавн врагов:** `SpawnEnemiesButton` (`Assets/_Project/Runtime/UI/SpawnEnemiesButton.cs`) на кнопке `SpawnButton` — по клику `EnemySpawnPoint.Spawn()` на всех точках в сцене (как `spawnOnStart`) или на массиве из инспектора.
+- **UI спавн врагов (изначально):** `SpawnEnemiesButton` на `SpawnButton` — по клику спавн на **всех** `EnemySpawnPoint` сцены или массиве из инспектора. **С 2026-04-19:** см. запись выше — один враг за клик, round-robin под `SpawnPoints`.
 - **Тюнинг анимации рыцаря:** поле `baseAttackAnimationDurationSeconds` в `CharacterHeroMeleeAttack` — это **полная длина клипа Attack при `Animator.speed = 1`** (должно совпадать с **Length** клипа в Inspector, например **0.5** с), а не «время до ивента»; `speed = baseDuration / cooldown` масштабирует **весь** клип под APS.
 
 ### 2026-04-16

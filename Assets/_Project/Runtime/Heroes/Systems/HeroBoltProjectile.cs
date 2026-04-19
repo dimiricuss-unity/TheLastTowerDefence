@@ -16,6 +16,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         ArrowFlightVfxConfig _cfg;
         EnemyHealth _targetEnemy;
         float _damage;
+        bool _isCritical;
         Vector2 _dir;
         float _maxTravelDist;
         float _traveled;
@@ -33,7 +34,8 @@ namespace TheLastTowerDefence.Heroes.Systems
             Vector3 worldFrom,
             Vector3 worldTo,
             EnemyHealth targetEnemy,
-            float damage)
+            float damage,
+            bool isCritical = false)
         {
             if (config == null || config.boltPrefab == null || targetEnemy == null || !targetEnemy.IsAlive || damage <= 0f)
                 return;
@@ -42,7 +44,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             var proj = go.GetComponent<HeroBoltProjectile>();
             if (proj == null)
                 proj = go.AddComponent<HeroBoltProjectile>();
-            proj.Init(config, worldFrom, worldTo, targetEnemy, damage);
+            proj.Init(config, worldFrom, worldTo, targetEnemy, damage, isCritical);
         }
 
         void Init(
@@ -50,11 +52,13 @@ namespace TheLastTowerDefence.Heroes.Systems
             Vector3 from,
             Vector3 to,
             EnemyHealth targetEnemy,
-            float damage)
+            float damage,
+            bool isCritical)
         {
             _cfg = cfg;
             _targetEnemy = targetEnemy;
             _damage = damage;
+            _isCritical = isCritical;
             _traveled = 0f;
             _damageApplied = false;
             _embedRemaining = 0f;
@@ -191,7 +195,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_boltCollider != null)
                 _boltCollider.enabled = false;
 
-            health.ApplyDamage(_damage);
+            health.ApplyDamage(_damage, _isCritical);
             Debug.Log($"[Enemy HP after hero hit] {health.CurrentHealth:F1} / {health.MaxHealth} (enemy '{health.name}')");
 
             _embedRemaining = Mathf.Max(0f, _cfg.embedDistanceAfterHitWorld);

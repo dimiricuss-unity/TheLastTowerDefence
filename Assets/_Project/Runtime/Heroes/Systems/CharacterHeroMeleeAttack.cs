@@ -136,10 +136,6 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (Time.time < _nextAttackTime)
                 return;
 
-            var damage = _stats.Damage;
-            if (damage <= 0f)
-                return;
-
             var victim = _attackTarget;
             var useEvent = applyDamageOnAnimationEvent && useAttackAnimation && _animator != null &&
                            !string.IsNullOrEmpty(attackTrigger);
@@ -158,13 +154,17 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             }
 
+            var damage = _stats.SampleStrikeDamage(out var isCritical);
+            if (damage <= 0f)
+                return;
+
             _nextAttackTime = Time.time + cooldown;
 
             FaceAttackVictim(victim);
             if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
                 _animator.SetTrigger(attackTrigger);
 
-            ApplyDamageToEnemy(victim, damage);
+            ApplyDamageToEnemy(victim, damage, isCritical);
         }
 
         /// <summary>Вызывается из Animation Event (через <see cref="CharacterHeroMeleeAttackAnimationRelay"/>).</summary>
@@ -185,14 +185,14 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_stats == null || !_stats.IsAlive)
                 return;
 
-            var damage = _stats.Damage;
+            var damage = _stats.SampleStrikeDamage(out var isCritical);
             if (damage <= 0f || victim == null)
                 return;
 
             if (!victim.IsAlive || !_enemiesInRange.Contains(victim))
                 return;
 
-            ApplyDamageToEnemy(victim, damage);
+            ApplyDamageToEnemy(victim, damage, isCritical);
         }
 
         void CancelPendingSwing(float cooldown)
@@ -202,12 +202,12 @@ namespace TheLastTowerDefence.Heroes.Systems
             _nextAttackTime = Time.time + cooldown;
         }
 
-        void ApplyDamageToEnemy(EnemyHealth victim, float damage)
+        void ApplyDamageToEnemy(EnemyHealth victim, float damage, bool isCritical = false)
         {
             if (victim == null || !victim.IsAlive)
                 return;
 
-            victim.ApplyDamage(damage);
+            victim.ApplyDamage(damage, isCritical);
             Debug.Log($"[Enemy HP after hero hit] {victim.CurrentHealth:F1} / {victim.MaxHealth} (enemy '{victim.name}')");
         }
 

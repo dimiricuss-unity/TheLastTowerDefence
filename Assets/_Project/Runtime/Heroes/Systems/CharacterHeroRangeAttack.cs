@@ -177,10 +177,6 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (Time.time < _nextAttackTime)
                 return;
 
-            var damage = _stats.Damage;
-            if (damage <= 0f)
-                return;
-
             var victim = _attackTarget;
             var useEvent = applyDamageOnAnimationEvent && useAttackAnimation && _animator != null &&
                            !string.IsNullOrEmpty(attackTrigger);
@@ -199,13 +195,17 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             }
 
+            var damage = _stats.SampleStrikeDamage(out var isCritical);
+            if (damage <= 0f)
+                return;
+
             _nextAttackTime = Time.time + cooldown;
 
             FaceAttackVictim(victim);
             if (useAttackAnimation && _animator != null && !string.IsNullOrEmpty(attackTrigger))
                 _animator.SetTrigger(attackTrigger);
 
-            TrySpawnBolt(victim, damage);
+            TrySpawnBolt(victim, damage, isCritical);
         }
 
         void TryHealingPriorityUpdate(float cooldown)
@@ -284,7 +284,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_stats == null || !_stats.IsAlive)
                 return;
 
-            var damage = _stats.Damage;
+            var damage = _stats.SampleStrikeDamage(out var isCritical);
             if (damage <= 0f || victim == null)
             {
                 _nextAttackTime = Time.time + cooldown;
@@ -297,7 +297,7 @@ namespace TheLastTowerDefence.Heroes.Systems
                 return;
             }
 
-            TrySpawnBolt(victim, damage);
+            TrySpawnBolt(victim, damage, isCritical);
             _nextAttackTime = Time.time + cooldown;
         }
 
@@ -310,14 +310,14 @@ namespace TheLastTowerDefence.Heroes.Systems
             _nextAttackTime = Time.time + cooldown;
         }
 
-        void TrySpawnBolt(EnemyHealth victim, float damage)
+        void TrySpawnBolt(EnemyHealth victim, float damage, bool isCritical = false)
         {
             if (arrowFlightVfx == null || victim == null || !victim.IsAlive || damage <= 0f)
                 return;
 
             var from = GetBoltSpawnWorldPosition();
             var to = GetEnemyWorldCenter(victim);
-            HeroBoltProjectile.Spawn(arrowFlightVfx, from, to, victim, damage);
+            HeroBoltProjectile.Spawn(arrowFlightVfx, from, to, victim, damage, isCritical);
         }
 
         Vector3 GetBoltSpawnWorldPosition()

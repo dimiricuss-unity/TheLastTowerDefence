@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd03f35145d0c5e4580ea0327b74fe26, type: 3}
   m_Name: ClericHealSpell
   m_EditorClassIdentifier: 
-  healAmount: 25
+  healAmount: 10
   manaCost: 15

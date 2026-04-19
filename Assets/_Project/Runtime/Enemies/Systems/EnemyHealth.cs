@@ -42,14 +42,15 @@ namespace TheLastTowerDefence.Enemies.Systems
             HealthChanged?.Invoke(_current, _max);
         }
 
-        public void ApplyDamage(float amount)
+        /// <param name="criticalHit">Если true, цифра урона на флоатере оранжевая (геройский крит).</param>
+        public void ApplyDamage(float amount, bool criticalHit = false)
         {
             if (!_configured || !IsAlive || amount <= 0f)
                 return;
 
             _current = Mathf.Max(0f, _current - amount);
             HealthChanged?.Invoke(_current, _max);
-            DamageFloaterRoot.ShowAtEnemy(this, amount);
+            DamageFloaterRoot.ShowAtEnemy(this, amount, criticalHit);
 
             if (_current <= 0f)
                 Die();
