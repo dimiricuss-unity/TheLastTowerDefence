@@ -13,6 +13,11 @@
 
 ## Журнал
 
+### 2026-04-20
+
+- **Окна персонажей (заглушки) — базовая навигация UI:** добавлен `Assets/_Project/Runtime/UI/CharacterWindowsController.cs`. Логика: по `InventoryButton` открывается `CharacterWindowsParent`, активируется `WarriorWindow` (по умолчанию), `ArcherWindow`/`ClericWindow` скрываются; по `WarriorButton`/`ArcherButton`/`ClericButton` показывается только соответствующее окно; по `NextButton` `CharacterWindowsParent` закрывается.
+- **Важное по подключению:** если контроллер висит на отключённом `CharacterWindowsParent`, подписки на кнопки не инициализируются (`Awake` не вызывается, пока объект не активен), поэтому `InventoryButton` не откроет окно. Рабочая схема: держать контроллер на всегда активном объекте (`UI`/`Canvas`) и управлять видимостью `CharacterWindowsParent` через него.
+
 ### 2026-04-19
 
 - **Таблица Character_stats → код:** папка `Assets/_Project/Runtime/Formulas/` — `CharacterFormulaInputs.cs` (`CharacterCoreStats`, `CharacterStatModifiers`, `CharacterWeaponStats`), `CharacterStatFormulas.cs` (HP, мана, реген маны, крит %, APS, мин/макс урон, крит-урон; `ExcelIntDown` под INT таблицы). Документ-источник: `Assets/Documentation/Character_stats.xml`.

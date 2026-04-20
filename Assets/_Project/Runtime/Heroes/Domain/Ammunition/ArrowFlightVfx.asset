@@ -25,4 +25,4 @@ MonoBehaviour:
   trailTime: 0.2
   trailMinVertexDistance: 0.035
   destroyDelayAfterHit: 0.45
-  embedDistanceAfterHitWorld: 0.5
+  embedDistanceAfterHitWorld: 0.3
