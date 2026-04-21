@@ -13,9 +13,13 @@ namespace TheLastTowerDefence.Heroes.Domain
         [Tooltip("SO оружия: название, тип, мин/макс урон, APS, модификатор крита. Если пусто — в бою подставятся TableExampleDefaults в CharacterHeroStats.")]
         public HeroWeaponConfig weapon;
 
+        [Header("Прогрессия")]
+        [Tooltip("Пороги XP по уровням и бонусные очки за уровень. Если пусто — опыт не начисляется.")]
+        public ExperienceSteps experienceSteps;
+
         [Header("Базовые характеристики")]
-        [Tooltip("Уровень персонажа (стартовое значение из дизайн-таблицы).")]
-        [Min(1)] public int level = 1;
+        [Tooltip("Уровень в конфиге (дизайн); в рантайме старт с 0, рост через опыт.")]
+        [Min(0)] public int level = 0;
 
         [Tooltip("Сила.")]
         [Min(0)] public int strength = 9;

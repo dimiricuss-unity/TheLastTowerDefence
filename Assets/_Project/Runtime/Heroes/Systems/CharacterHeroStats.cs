@@ -9,6 +9,8 @@ namespace TheLastTowerDefence.Heroes.Systems
     /// <summary>
     /// Применяет <see cref="HeroStatsConfig"/> (в т.ч. <see cref="HeroStatsConfig.weapon"/>); боевые числа из <see cref="CharacterStatFormulas"/>.
     /// Аддитивные модификаторы статов (<see cref="CharacterStatModifiers"/>) в будущем можно менять из инвентаря/баффов и вызывать пересчёт.
+    /// Уровень и XP в сессии с нуля; в формулы уходит <c>_runtimeLevel</c>, очки за уровень — в тот же пул, что и стартовые очки характеристик.
+    /// Очки характеристик: только в рамках текущего Play Mode; сессия до Next, закрепление в <see cref="CommitSkillAllocationSession"/>.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CharacterHeroStats : MonoBehaviour, IDamageable
@@ -17,6 +19,12 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         [Header("Модификаторы базовых статов (баффы / предметы / таланты)")]
         [SerializeField] CharacterStatModifiers statModifiers;
+
+        CharacterStatModifiers _committedSkillBonuses;
+        CharacterStatModifiers _sessionSkillBonuses;
+        int _availableSkillPoints;
+        int _runtimeLevel;
+        int _xpIntoCurrentLevel;
 
         float _maxHealth;
         float _currentHealth;
@@ -30,8 +38,12 @@ namespace TheLastTowerDefence.Heroes.Systems
         float _currentMana;
         float _manaRegenPerSecond;
         bool _configured;
+        CharacterCoreStats _coreStats;
 
         public HeroStatsConfig Config => config;
+
+        /// <summary>Уровень и базовые характеристики с учётом <see cref="statModifiers"/> (как в <see cref="ApplyDerivedStats"/>).</summary>
+        public CharacterCoreStats CoreStats => _coreStats;
         public float CurrentHealth => _currentHealth;
         public float MaxHealth => _maxHealth;
         public float MinDamage => _minDamage;
@@ -42,15 +54,64 @@ namespace TheLastTowerDefence.Heroes.Systems
         public float CriticalDamageMax => _criticalDamageMax;
         public float CurrentMana => _currentMana;
         public float MaxMana => _maxMana;
+        public float ManaRegenPerSecond => _manaRegenPerSecond;
         public bool IsAlive => _configured && _currentHealth > 0f;
+
+        public int AvailableSkillPoints => _availableSkillPoints;
+
+        /// <summary>Текущий уровень героя в сессии (с 0).</summary>
+        public int DisplayLevel => _runtimeLevel;
+
+        public int CurrentXpIntoLevel => _xpIntoCurrentLevel;
+
+        public int XpThresholdForNextLevel =>
+            config != null && config.experienceSteps != null
+                ? config.experienceSteps.GetXpToNextLevel(_runtimeLevel)
+                : 0;
+
+        /// <summary>Накопительный опыт для UI «Exp»: нижняя граница текущего сегмента + XP в уровне.</summary>
+        public int CumulativeXpDisplay =>
+            config?.experienceSteps != null
+                ? config.experienceSteps.SumXpThresholdsFromLevelZeroUpToExclusive(_runtimeLevel) + _xpIntoCurrentLevel
+                : _xpIntoCurrentLevel;
+
+        /// <summary>Накопительный «потолок» до следующего уровня для UI «Exp» (правая часть дроби).</summary>
+        public int CumulativeXpNextBoundary
+        {
+            get
+            {
+                var steps = config?.experienceSteps;
+                if (steps == null)
+                    return 0;
+                if (steps.HasNextLevel(_runtimeLevel))
+                    return steps.SumXpThresholdsFromLevelZeroThroughInclusive(_runtimeLevel);
+                var total = steps.SumAllXpThresholds();
+                return Mathf.Max(total, CumulativeXpDisplay);
+            }
+        }
+
+        /// <summary>Заполнение полоски уровня только внутри текущего сегмента (после апa снова от 0).</summary>
+        public float LevelProgressFill01
+        {
+            get
+            {
+                var t = XpThresholdForNextLevel;
+                return t > 0 ? Mathf.Clamp01((float)_xpIntoCurrentLevel / t) : 0f;
+            }
+        }
 
         public event Action<float, float> HealthChanged;
         public event Action<float, float> ManaChanged;
+        public event Action DerivedStatsChanged;
+        public event Action ProgressionChanged;
         public event Action<CharacterHeroStats> Died;
 
         void Awake()
         {
+            ResetProgressionForPlaySession();
+            ResetSkillPointsForPlaySession();
             ApplyDerivedStats();
+            ProgressionChanged?.Invoke();
         }
 
         void Update()
@@ -67,12 +128,16 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (config == null)
             {
                 _configured = false;
+                _coreStats = default;
                 Debug.LogError($"[{nameof(CharacterHeroStats)}] HeroStatsConfig is not assigned on '{name}'.", this);
                 return;
             }
 
-            var coreBase = CharacterCoreStats.FromHeroConfig(config);
-            var core = CharacterCoreStats.ApplyModifiers(coreBase, statModifiers);
+            var coreBase = CharacterCoreStats.FromHeroConfig(config, _runtimeLevel);
+            var skillMods = CharacterStatModifiers.Combine(_committedSkillBonuses, _sessionSkillBonuses);
+            var allMods = CharacterStatModifiers.Combine(statModifiers, skillMods);
+            var core = CharacterCoreStats.ApplyModifiers(coreBase, allMods);
+            _coreStats = core;
 
             var weapon = ResolveWeaponStatsFromConfig();
 
@@ -110,6 +175,161 @@ namespace TheLastTowerDefence.Heroes.Systems
             }
 
             _configured = true;
+            HealthChanged?.Invoke(_currentHealth, _maxHealth);
+            ManaChanged?.Invoke(_currentMana, _maxMana);
+            DerivedStatsChanged?.Invoke();
+        }
+
+        void ResetProgressionForPlaySession()
+        {
+            _runtimeLevel = 0;
+            _xpIntoCurrentLevel = 0;
+        }
+
+        void ResetSkillPointsForPlaySession()
+        {
+            _availableSkillPoints = 0;
+            _committedSkillBonuses = CharacterStatModifiers.None;
+            _sessionSkillBonuses = CharacterStatModifiers.None;
+        }
+
+        /// <summary>Добавить опыт; за один вызов возможен не более чем один переход на следующий уровень.</summary>
+        public void AddExperience(int amount)
+        {
+            if (amount <= 0 || config == null)
+                return;
+
+            var steps = config.experienceSteps;
+            if (steps == null || !steps.HasNextLevel(_runtimeLevel))
+                return;
+
+            _xpIntoCurrentLevel += amount;
+            var threshold = steps.GetXpToNextLevel(_runtimeLevel);
+            var leveled = false;
+            if (threshold > 0 && _xpIntoCurrentLevel >= threshold)
+            {
+                _xpIntoCurrentLevel -= threshold;
+                _runtimeLevel++;
+                _availableSkillPoints += Mathf.Max(0, steps.attributePointsGrantedPerLevelUp);
+                leveled = true;
+            }
+
+            if (leveled)
+            {
+                ApplyDerivedStats();
+                RestoreHpAndManaToFullAndNotify();
+            }
+
+            ProgressionChanged?.Invoke();
+        }
+
+        static int GetStat(in CharacterStatModifiers m, HeroStatKind stat) =>
+            stat switch
+            {
+                HeroStatKind.Strength => m.StrengthBonus,
+                HeroStatKind.Dexterity => m.DexterityBonus,
+                HeroStatKind.Stamina => m.StaminaBonus,
+                HeroStatKind.Intelligence => m.IntelligenceBonus,
+                HeroStatKind.Willpower => m.WillpowerBonus,
+                HeroStatKind.Luck => m.LuckBonus,
+                _ => 0,
+            };
+
+        static void AddStat(ref CharacterStatModifiers m, HeroStatKind stat, int delta)
+        {
+            switch (stat)
+            {
+                case HeroStatKind.Strength:
+                    m.StrengthBonus = Mathf.Max(0, m.StrengthBonus + delta);
+                    break;
+                case HeroStatKind.Dexterity:
+                    m.DexterityBonus = Mathf.Max(0, m.DexterityBonus + delta);
+                    break;
+                case HeroStatKind.Stamina:
+                    m.StaminaBonus = Mathf.Max(0, m.StaminaBonus + delta);
+                    break;
+                case HeroStatKind.Intelligence:
+                    m.IntelligenceBonus = Mathf.Max(0, m.IntelligenceBonus + delta);
+                    break;
+                case HeroStatKind.Willpower:
+                    m.WillpowerBonus = Mathf.Max(0, m.WillpowerBonus + delta);
+                    break;
+                case HeroStatKind.Luck:
+                    m.LuckBonus = Mathf.Max(0, m.LuckBonus + delta);
+                    break;
+            }
+        }
+
+        public int GetSessionSkillBonus(HeroStatKind stat) => GetStat(in _sessionSkillBonuses, stat);
+
+        public bool CanRefundSessionSkillPoint(HeroStatKind stat) =>
+            config != null && GetSessionSkillBonus(stat) > 0;
+
+        public bool TrySpendSkillPoint(HeroStatKind stat)
+        {
+            if (config == null || _availableSkillPoints <= 0)
+                return false;
+
+            _availableSkillPoints--;
+            AddStat(ref _sessionSkillBonuses, stat, 1);
+            ApplyDerivedStats();
+            return true;
+        }
+
+        public bool TryRefundSessionSkillPoint(HeroStatKind stat)
+        {
+            if (config == null)
+                return false;
+            if (GetStat(in _sessionSkillBonuses, stat) <= 0)
+                return false;
+
+            AddStat(ref _sessionSkillBonuses, stat, -1);
+            _availableSkillPoints++;
+            ApplyDerivedStats();
+            return true;
+        }
+
+        /// <summary>Закрепить сессионные вложения в характеристики (закрытие окна персонажей через Next).</summary>
+        public void CommitSkillAllocationSession()
+        {
+            if (config == null)
+                return;
+
+            var hadConfig = _configured;
+            var prevMaxHp = _maxHealth;
+            var prevMaxMana = _maxMana;
+
+            _committedSkillBonuses = CharacterStatModifiers.Combine(_committedSkillBonuses, _sessionSkillBonuses);
+            _sessionSkillBonuses = CharacterStatModifiers.None;
+            ApplyDerivedStats();
+
+            if (!hadConfig)
+                return;
+
+            const float eps = 1e-3f;
+            var hpMaxUp = _maxHealth > prevMaxHp + eps;
+            var manaMaxUp = _maxMana > prevMaxMana + eps;
+            if (!hpMaxUp && !manaMaxUp)
+                return;
+
+            if (hpMaxUp)
+                _currentHealth = _maxHealth;
+            if (manaMaxUp)
+                _currentMana = _maxMana;
+
+            if (hpMaxUp)
+                HealthChanged?.Invoke(_currentHealth, _maxHealth);
+            if (manaMaxUp)
+                ManaChanged?.Invoke(_currentMana, _maxMana);
+        }
+
+        void RestoreHpAndManaToFullAndNotify()
+        {
+            if (!_configured)
+                return;
+
+            _currentHealth = _maxHealth;
+            _currentMana = _maxMana;
             HealthChanged?.Invoke(_currentHealth, _maxHealth);
             ManaChanged?.Invoke(_currentMana, _maxMana);
         }

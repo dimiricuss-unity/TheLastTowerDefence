@@ -28,7 +28,7 @@ namespace TheLastTowerDefence.Formulas
             int willpower,
             int luck)
         {
-            Level = Mathf.Max(1, level);
+            Level = Mathf.Max(0, level);
             Strength = Mathf.Max(0, strength);
             Dexterity = Mathf.Max(0, dexterity);
             Stamina = Mathf.Max(0, stamina);
@@ -37,14 +37,14 @@ namespace TheLastTowerDefence.Formulas
             Luck = Mathf.Max(0, luck);
         }
 
-        /// <summary>Собирает статы из <see cref="HeroStatsConfig"/> (там только база и уровень).</summary>
-        public static CharacterCoreStats FromHeroConfig(HeroStatsConfig config)
+        /// <summary>Собирает статы из <see cref="HeroStatsConfig"/> (там только база; уровень задаётся рантаймом).</summary>
+        public static CharacterCoreStats FromHeroConfig(HeroStatsConfig config, int runtimeLevel)
         {
             if (config == null)
                 throw new ArgumentNullException(nameof(config));
 
             return new CharacterCoreStats(
-                config.level,
+                runtimeLevel,
                 config.strength,
                 config.dexterity,
                 config.stamina,
@@ -55,7 +55,7 @@ namespace TheLastTowerDefence.Formulas
 
         /// <summary>
         /// Суммирует базу и аддитивные модификаторы (баффы, предметы, скиллы).
-        /// Уровень не ниже 1, остальные не ниже 0.
+        /// Уровень не ниже 0, остальные не ниже 0.
         /// </summary>
         public static CharacterCoreStats ApplyModifiers(in CharacterCoreStats baseStats, in CharacterStatModifiers modifiers)
         {
@@ -100,6 +100,20 @@ namespace TheLastTowerDefence.Formulas
         public int LuckBonus;
 
         public static CharacterStatModifiers None => default;
+
+        public static CharacterStatModifiers Combine(in CharacterStatModifiers a, in CharacterStatModifiers b)
+        {
+            return new CharacterStatModifiers
+            {
+                LevelBonus = a.LevelBonus + b.LevelBonus,
+                StrengthBonus = a.StrengthBonus + b.StrengthBonus,
+                DexterityBonus = a.DexterityBonus + b.DexterityBonus,
+                StaminaBonus = a.StaminaBonus + b.StaminaBonus,
+                IntelligenceBonus = a.IntelligenceBonus + b.IntelligenceBonus,
+                WillpowerBonus = a.WillpowerBonus + b.WillpowerBonus,
+                LuckBonus = a.LuckBonus + b.LuckBonus,
+            };
+        }
     }
 
     /// <summary>

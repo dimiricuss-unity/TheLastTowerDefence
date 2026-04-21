@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Warrior
   m_EditorClassIdentifier: 
   weapon: {fileID: 11400000, guid: 91b6e3c45d2a4f1089a7c1e2f3b4d508, type: 2}
-  level: 1
-  strength: 9
-  dexterity: 7
+  experienceSteps: {fileID: 11400000, guid: b2c3d4e5f6a748b9c0d1e2f3a4b5c6d7, type: 2}
+  level: 0
+  strength: 7
+  dexterity: 9
   stamina: 9
   intelligence: 5
   willpower: 5

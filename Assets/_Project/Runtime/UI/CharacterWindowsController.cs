@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TheLastTowerDefence.Heroes.Systems;
 
 namespace TheLastTowerDefence.UI
 {
@@ -89,6 +90,16 @@ namespace TheLastTowerDefence.UI
 
         private void CloseCharacterWindows()
         {
+            var heroes = FindObjectsByType<CharacterHeroStats>(FindObjectsSortMode.None);
+            for (var i = 0; i < heroes.Length; i++)
+            {
+                if (heroes[i] != null)
+                {
+                    heroes[i].CommitSkillAllocationSession();
+                }
+            }
+
+            CharacterWindowTabsSharedState.ResetToInventory();
             SetParentVisible(false);
         }
 

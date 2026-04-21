@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using TheLastTowerDefence.Enemies.Domain;
+using TheLastTowerDefence.Heroes.Systems;
 using TheLastTowerDefence.UI;
 
 namespace TheLastTowerDefence.Enemies.Systems
@@ -17,6 +18,7 @@ namespace TheLastTowerDefence.Enemies.Systems
         float _max;
         float _current;
         bool _configured;
+        int _experienceReward;
 
         public float CurrentHealth => _current;
         public float MaxHealth => _max;
@@ -38,6 +40,7 @@ namespace TheLastTowerDefence.Enemies.Systems
 
             _max = Mathf.Max(1f, config.maxHealth);
             _current = _max;
+            _experienceReward = Mathf.Max(0, config.experience);
             _configured = true;
             HealthChanged?.Invoke(_current, _max);
         }
@@ -63,6 +66,7 @@ namespace TheLastTowerDefence.Enemies.Systems
             if (_attack != null)
                 _attack.enabled = false;
 
+            HeroExperienceService.GrantSharedKillExperience(_experienceReward);
             Died?.Invoke(this);
             gameObject.SetActive(false);
         }

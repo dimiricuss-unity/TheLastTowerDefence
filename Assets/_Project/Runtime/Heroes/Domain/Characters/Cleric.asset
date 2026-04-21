@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Cleric
   m_EditorClassIdentifier: 
   weapon: {fileID: 11400000, guid: 946a1f42cfcc2a04a85976d42ab78865, type: 2}
-  level: 1
+  experienceSteps: {fileID: 11400000, guid: b2c3d4e5f6a748b9c0d1e2f3a4b5c6d7, type: 2}
+  level: 0
   strength: 5
   dexterity: 5
   stamina: 5
