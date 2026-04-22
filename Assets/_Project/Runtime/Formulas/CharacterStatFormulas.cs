@@ -1,4 +1,5 @@
 using UnityEngine;
+using TheLastTowerDefence.Heroes.Domain;
 
 namespace TheLastTowerDefence.Formulas
 {
@@ -52,33 +53,59 @@ namespace TheLastTowerDefence.Formulas
         }
 
         /// <summary>
-        /// Скорость атаки (APS): <c>MIN(3, INT(APS0*(1+0.03*Ловкость)*100)/100)</c>, APS0 из оружия.
+        /// Скорость атаки (APS): <c>MIN(3, INT(APS0*(1+0.03*Стат)*100)/100)</c>, APS0 из оружия.
+        /// Стат — ловкость или воля по <paramref name="attackSpeedScaling"/> (задаётся в <see cref="HeroStatsConfig"/>).
         /// </summary>
-        public static float ComputeAttacksPerSecond(in CharacterCoreStats core, in CharacterWeaponStats weapon)
+        public static float ComputeAttacksPerSecond(
+            in CharacterCoreStats core,
+            in CharacterWeaponStats weapon,
+            AttackSpeedScalingAttribute attackSpeedScaling = AttackSpeedScalingAttribute.Dexterity)
         {
             var aps0 = Mathf.Max(0.01f, weapon.weaponAttacksPerSecond);
-            var scaled = aps0 * (1f + 0.03f * core.Dexterity);
+            var stat = attackSpeedScaling == AttackSpeedScalingAttribute.Willpower
+                ? core.Willpower
+                : core.Dexterity;
+            var scaled = aps0 * (1f + 0.03f * stat);
             var truncated = ExcelIntDown(scaled * 100f) / 100f;
             return Mathf.Clamp(truncated, 0.01f, 3f);
         }
 
         /// <summary>
-        /// Минимальный урон: <c>MAX(1, МинУронОружия + Сила + INT(Ловкость/2))</c>.
+        /// Минимальный урон: <c>MAX(1, МинУронОружия + ОсновнойСтат + INT(Ловкость/2))</c>.
+        /// Основной стат — сила, интеллект или ловкость по <paramref name="physicalDamagePrimary"/> (<see cref="HeroStatsConfig"/>).
         /// </summary>
-        public static float ComputeMinPhysicalDamage(in CharacterCoreStats core, in CharacterWeaponStats weapon)
+        public static float ComputeMinPhysicalDamage(
+            in CharacterCoreStats core,
+            in CharacterWeaponStats weapon,
+            PhysicalDamagePrimaryAttribute physicalDamagePrimary = PhysicalDamagePrimaryAttribute.Strength)
         {
             var w = Mathf.Max(0f, weapon.weaponMinDamage);
-            var v = w + core.Strength + ExcelIntDown(core.Dexterity / 2f);
+            var primary = physicalDamagePrimary switch
+            {
+                PhysicalDamagePrimaryAttribute.Intelligence => core.Intelligence,
+                PhysicalDamagePrimaryAttribute.Dexterity => core.Dexterity,
+                _ => core.Strength,
+            };
+            var v = w + primary + ExcelIntDown(core.Dexterity / 2f);
             return Mathf.Max(1f, v);
         }
 
         /// <summary>
-        /// Максимальный урон: <c>MAX(1, МаксУронОружия + Сила + INT(Ловкость/2))</c>.
+        /// Максимальный урон: <c>MAX(1, МаксУронОружия + ОсновнойСтат + INT(Ловкость/2))</c>.
         /// </summary>
-        public static float ComputeMaxPhysicalDamage(in CharacterCoreStats core, in CharacterWeaponStats weapon)
+        public static float ComputeMaxPhysicalDamage(
+            in CharacterCoreStats core,
+            in CharacterWeaponStats weapon,
+            PhysicalDamagePrimaryAttribute physicalDamagePrimary = PhysicalDamagePrimaryAttribute.Strength)
         {
             var w = Mathf.Max(0f, weapon.weaponMaxDamage);
-            var v = w + core.Strength + ExcelIntDown(core.Dexterity / 2f);
+            var primary = physicalDamagePrimary switch
+            {
+                PhysicalDamagePrimaryAttribute.Intelligence => core.Intelligence,
+                PhysicalDamagePrimaryAttribute.Dexterity => core.Dexterity,
+                _ => core.Strength,
+            };
+            var v = w + primary + ExcelIntDown(core.Dexterity / 2f);
             return Mathf.Max(1f, v);
         }
 

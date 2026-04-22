@@ -7,16 +7,19 @@ using TheLastTowerDefence.UI;
 namespace TheLastTowerDefence.Heroes.Systems
 {
     /// <summary>
-    /// UI на <c>Cleric_icon</c>: мана (синяя сразу, белая догоняющая — через <see cref="UiFilledImageCatchUp"/>),
-    /// текст маны, отдельная полоска кулдауна дальнего боя/лечения. HP остаётся на <see cref="CharacterHeroHitBarView"/>.
+    /// UI на иконке героя (<c>Cleric_icon</c>, <c>Knight_icon</c>, <c>Archer_icon</c>): мана (синяя сразу,
+    /// белая догоняющая — через <see cref="UiFilledImageCatchUp"/>), текст маны, опционально полоска кулдауна атаки.
+    /// HP остаётся на <see cref="CharacterHeroHitBarView"/>.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class CharacterClericHudView : MonoBehaviour
     {
-        [Tooltip("Стат клирика. Пусто — один герой в сцене или поиск по имени объекта (Cleric_icon / Cleric).")]
+        const string RangeHeroTag = "RangeHero";
+
+        [Tooltip("Стат героя. Пусто — один герой в сцене или подбор по имени иконки (Knight / Archer / Cleric).")]
         [SerializeField] CharacterHeroStats hero;
 
-        [Tooltip("Дальний бой (кулдаун атаки и лечения). Пусто — ищется на том же герое.")]
+        [Tooltip("Дальний бой (кулдаун выстрела/лечения). Пусто — ищется на герое, если есть.")]
         [SerializeField] CharacterHeroRangeAttack rangeAttack;
 
         [SerializeField] Image blueManaBar;
@@ -25,11 +28,18 @@ namespace TheLastTowerDefence.Heroes.Systems
         [SerializeField] TMP_Text manaText;
         [SerializeField] float whiteManaCatchUpSpeed = 8f;
 
+        CharacterHeroMeleeAttack _melee;
+
         void Awake()
         {
             TryResolveHero();
-            if (rangeAttack == null && hero != null)
-                rangeAttack = hero.GetComponentInChildren<CharacterHeroRangeAttack>(true);
+            if (hero != null)
+            {
+                if (rangeAttack == null)
+                    rangeAttack = hero.GetComponentInChildren<CharacterHeroRangeAttack>(true);
+                _melee = hero.GetComponentInChildren<CharacterHeroMeleeAttack>(true);
+            }
+
             TryAutoWire();
         }
 
@@ -89,14 +99,23 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (whiteCooldownBar == null)
                 return;
 
-            if (rangeAttack == null || hero == null || !hero.IsAlive)
+            if (hero == null || !hero.IsAlive)
             {
                 whiteCooldownBar.fillAmount = 0f;
                 return;
             }
 
-            var remaining = rangeAttack.AttackCooldownRemaining01;
+            var remaining = GetAttackCooldownRemaining01();
             whiteCooldownBar.fillAmount = Mathf.Clamp01(1f - remaining);
+        }
+
+        float GetAttackCooldownRemaining01()
+        {
+            if (rangeAttack != null)
+                return rangeAttack.AttackCooldownRemaining01;
+            if (_melee != null)
+                return _melee.AttackCooldownRemaining01;
+            return 0f;
         }
 
         void ApplyDeadVisuals()
@@ -124,15 +143,35 @@ namespace TheLastTowerDefence.Heroes.Systems
             }
 
             var icon = gameObject.name;
-            if (icon.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) < 0)
-                return;
-
             foreach (var h in all)
             {
                 if (h == null)
                     continue;
-                if (h.gameObject.name.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                    h.transform.root.name.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) >= 0)
+
+                if (icon.IndexOf("Knight", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    !h.CompareTag(RangeHeroTag))
+                {
+                    hero = h;
+                    return;
+                }
+
+                if (icon.IndexOf("Warrior", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    !h.CompareTag(RangeHeroTag))
+                {
+                    hero = h;
+                    return;
+                }
+
+                if (icon.IndexOf("Archer", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    h.CompareTag(RangeHeroTag))
+                {
+                    hero = h;
+                    return;
+                }
+
+                if (icon.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) >= 0 &&
+                    (h.gameObject.name.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                     h.transform.root.name.IndexOf("Cleric", StringComparison.OrdinalIgnoreCase) >= 0))
                 {
                     hero = h;
                     return;
@@ -145,6 +184,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (blueManaBar == null)
             {
                 blueManaBar = transform.Find("ManaBar/BlackBack/BlueBar")?.GetComponent<Image>()
+                              ?? transform.Find("ManaBar/BlackBack/BlueLine")?.GetComponent<Image>()
                               ?? transform.Find("ManaBar/BlueBar")?.GetComponent<Image>()
                               ?? transform.Find("BlueBar")?.GetComponent<Image>();
             }
@@ -152,6 +192,7 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (whiteManaCatchUpBar == null)
             {
                 whiteManaCatchUpBar = transform.Find("ManaBar/BlackBack/WhiteBar")?.GetComponent<Image>()
+                                      ?? transform.Find("ManaBar/BlackBack/WhiteBlack")?.GetComponent<Image>()
                                       ?? transform.Find("ManaBar/WhiteBar")?.GetComponent<Image>();
             }
 

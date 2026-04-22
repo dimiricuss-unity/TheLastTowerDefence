@@ -17,6 +17,12 @@ namespace TheLastTowerDefence.Heroes.Domain
         [Tooltip("Пороги XP по уровням и бонусные очки за уровень. Если пусто — опыт не начисляется.")]
         public ExperienceSteps experienceSteps;
 
+        [Tooltip("Характеристика в формуле APS: 1 + 0.03×стат. По умолчанию ловкость; клерик — воля.")]
+        public AttackSpeedScalingAttribute attackSpeedScaling = AttackSpeedScalingAttribute.Dexterity;
+
+        [Tooltip("Сила, интеллект или ловкость в формуле мин/макс урона: урон оружия + выбранный стат + INT(Ловкость/2). Клерик — интеллект, лучник — ловкость.")]
+        public PhysicalDamagePrimaryAttribute physicalDamagePrimary = PhysicalDamagePrimaryAttribute.Strength;
+
         [Header("Базовые характеристики")]
         [Tooltip("Уровень в конфиге (дизайн); в рантайме старт с 0, рост через опыт.")]
         [Min(0)] public int level = 0;

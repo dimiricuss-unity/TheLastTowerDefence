@@ -7,8 +7,10 @@ using TheLastTowerDefence.Heroes.Systems;
 namespace TheLastTowerDefence.UI
 {
     /// <summary>
-    /// Прогресс уровня под вкладкой «Характеристики»: LevelContent, Exp (накопительный XP / накопительный порог следующего уровня),
-    /// LevelLine — только текущий сегмент (после апa с нуля до порога этого уровня).
+    /// Прогресс уровня под вкладкой «Характеристики»: LevelContent, Exp — <b>накопительный</b> XP
+    /// (<see cref="CharacterHeroStats.CumulativeXpDisplay"/> / <see cref="CharacterHeroStats.CumulativeXpNextBoundary"/>),
+    /// вехи задаются в <c>ExperienceSteps</c> как накопительные пороги. LevelLine — доля внутри текущего сегмента.
+    /// На максимальном уровне — накопительный итог / сумма всех сегментов (последняя веха).
     /// Вешается на <c>CharacteristicsTab</c> рядом с остальными видами окна героя.
     /// </summary>
     [DisallowMultipleComponent]

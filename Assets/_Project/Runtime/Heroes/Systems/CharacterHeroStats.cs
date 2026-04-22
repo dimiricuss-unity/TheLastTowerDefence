@@ -69,13 +69,13 @@ namespace TheLastTowerDefence.Heroes.Systems
                 ? config.experienceSteps.GetXpToNextLevel(_runtimeLevel)
                 : 0;
 
-        /// <summary>Накопительный опыт для UI «Exp»: нижняя граница текущего сегмента + XP в уровне.</summary>
+        /// <summary>Накопительный опыт для UI «Exp»: веха начала текущего уровня + XP в сегменте (см. <see cref="Heroes.Domain.ExperienceSteps"/>).</summary>
         public int CumulativeXpDisplay =>
             config?.experienceSteps != null
                 ? config.experienceSteps.SumXpThresholdsFromLevelZeroUpToExclusive(_runtimeLevel) + _xpIntoCurrentLevel
                 : _xpIntoCurrentLevel;
 
-        /// <summary>Накопительный «потолок» до следующего уровня для UI «Exp» (правая часть дроби).</summary>
+        /// <summary>Накопительная веха конца текущего этапа для UI «Exp» (правая часть дроби).</summary>
         public int CumulativeXpNextBoundary
         {
             get
@@ -144,11 +144,11 @@ namespace TheLastTowerDefence.Heroes.Systems
             _maxHealth = CharacterStatFormulas.ComputeMaxHitPoints(core);
             _maxMana = CharacterStatFormulas.ComputeMaxMana(core);
             _manaRegenPerSecond = CharacterStatFormulas.ComputeManaRegenPerSecond(core);
-            _attacksPerSecond = CharacterStatFormulas.ComputeAttacksPerSecond(core, weapon);
+            _attacksPerSecond = CharacterStatFormulas.ComputeAttacksPerSecond(core, weapon, config.attackSpeedScaling);
             _critChancePercent = CharacterStatFormulas.ComputeCritChancePercent(core, weapon);
 
-            _minDamage = CharacterStatFormulas.ComputeMinPhysicalDamage(core, weapon);
-            _maxDamage = CharacterStatFormulas.ComputeMaxPhysicalDamage(core, weapon);
+            _minDamage = CharacterStatFormulas.ComputeMinPhysicalDamage(core, weapon, config.physicalDamagePrimary);
+            _maxDamage = CharacterStatFormulas.ComputeMaxPhysicalDamage(core, weapon, config.physicalDamagePrimary);
             if (_minDamage > _maxDamage)
                 (_minDamage, _maxDamage) = (_maxDamage, _minDamage);
 
