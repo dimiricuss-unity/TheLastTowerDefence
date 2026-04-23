@@ -22,6 +22,29 @@ namespace TheLastTowerDefence.UI
         [SerializeField] private GameObject archerWindow;
         [SerializeField] private GameObject clericWindow;
 
+        /// <summary>
+        /// Окно персонажа, которое сейчас активно в иерархии (вкладки/инвентарь общие).
+        /// </summary>
+        public GameObject GetActiveCharacterWindow()
+        {
+            if (warriorWindow != null && warriorWindow.activeInHierarchy)
+            {
+                return warriorWindow;
+            }
+
+            if (archerWindow != null && archerWindow.activeInHierarchy)
+            {
+                return archerWindow;
+            }
+
+            if (clericWindow != null && clericWindow.activeInHierarchy)
+            {
+                return clericWindow;
+            }
+
+            return null;
+        }
+
         private void Awake()
         {
             if (inventoryButton != null)
@@ -128,9 +151,24 @@ namespace TheLastTowerDefence.UI
 
         private void SetActiveCharacterWindow(GameObject activeWindow)
         {
-            SetWindowActive(warriorWindow, activeWindow == warriorWindow);
-            SetWindowActive(archerWindow, activeWindow == archerWindow);
-            SetWindowActive(clericWindow, activeWindow == clericWindow);
+            // Deactivate all first so the previously active window's OnDisable runs before
+            // the new window's OnEnable (avoids shared Inventory being hidden after shown).
+            SetWindowActive(warriorWindow, false);
+            SetWindowActive(archerWindow, false);
+            SetWindowActive(clericWindow, false);
+
+            if (activeWindow == warriorWindow)
+            {
+                SetWindowActive(warriorWindow, true);
+            }
+            else if (activeWindow == archerWindow)
+            {
+                SetWindowActive(archerWindow, true);
+            }
+            else if (activeWindow == clericWindow)
+            {
+                SetWindowActive(clericWindow, true);
+            }
         }
 
         private static void SetWindowActive(GameObject window, bool active)
