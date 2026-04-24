@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -10,6 +12,19 @@ namespace TheLastTowerDefence.Inventory.Systems
         [SerializeField] private GridLayoutGroup gridCellsLayer;
         [SerializeField] private RectTransform itemsLayer;
         [SerializeField] private RectTransform viewport;
+
+        [Header("Scroll")]
+        [SerializeField] private bool enableVerticalScroll = true;
+        [SerializeField] private float scrollWheelSensitivity = 40f;
+        [Tooltip("Сколько строк сетки за один клик ScrollUp / ScrollDown.")]
+        [SerializeField] private int scrollStepInRows = 5;
+        [Tooltip("Длительность плавной прокрутки по кнопкам (unscaled).")]
+        [SerializeField] private float scrollButtonAnimDuration = 0.16f;
+
+        [Header("Toolbar (родитель — обычно Inventory; кнопки рядом с GridViewport)")]
+        [SerializeField] private Button scrollUpButton;
+        [SerializeField] private Button scrollDownButton;
+        [SerializeField] private Button sortInventoryButton;
 
         [Header("Drag placement highlight")]
         [SerializeField] private Color validPlacementCellTint = new Color(0.25f, 0.85f, 0.4f, 1f);
@@ -32,15 +47,350 @@ namespace TheLastTowerDefence.Inventory.Systems
         private Image[] _cellBackgroundImages;
         private Color[] _cellOriginalColors;
         private bool _cellColorsCached;
+        private ScrollRect _scrollRect;
+        private Transform _sortHoldRoot;
+        private bool _toolbarListenersBound;
+        private Coroutine _scrollButtonRoutine;
 
         private void Awake()
         {
             BindMissingReferences();
+            SetupVerticalScrollIfNeeded();
+            TryAutoAssignToolbarButtons();
+            BindToolbarListeners();
+        }
+
+        private void OnDestroy()
+        {
+            if (_scrollButtonRoutine != null)
+            {
+                StopCoroutine(_scrollButtonRoutine);
+                _scrollButtonRoutine = null;
+            }
+
+            UnbindToolbarListeners();
+        }
+
+        private void OnEnable()
+        {
+            RefreshScrollableContentDimensions();
+        }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            RefreshScrollableContentDimensions();
         }
 
         private void OnValidate()
         {
             BindMissingReferences();
+            TryAutoAssignToolbarButtons();
+            if (Application.isPlaying)
+            {
+                UnbindToolbarListeners();
+                BindToolbarListeners();
+            }
+        }
+
+        /// <summary>
+        /// Прокрутка вверх (к началу списка) примерно на <see cref="scrollStepInRows"/> ячеек по высоте.
+        /// </summary>
+        public void ScrollUpByStep()
+        {
+            ScrollByRowDelta(scrollStepInRows);
+        }
+
+        /// <summary>
+        /// Прокрутка вниз (к концу списка).
+        /// </summary>
+        public void ScrollDownByStep()
+        {
+            ScrollByRowDelta(-scrollStepInRows);
+        }
+
+        /// <summary>
+        /// Упорядочивает предметы по имени конфига и уплотняет слева направо, сверху вниз.
+        /// </summary>
+        public void SortAndPackInventoryItems()
+        {
+            BindMissingReferences();
+            if (itemsLayer == null || gridCellsLayer == null)
+            {
+                return;
+            }
+
+            var buffer = new List<InventoryItemView>(itemsLayer.childCount);
+            for (var i = 0; i < itemsLayer.childCount; i++)
+            {
+                var iv = itemsLayer.GetChild(i).GetComponent<InventoryItemView>();
+                if (iv != null && iv.Config != null)
+                {
+                    buffer.Add(iv);
+                }
+            }
+
+            if (buffer.Count == 0)
+            {
+                return;
+            }
+
+            buffer.Sort(CompareItemsByConfigName);
+
+            var hold = GetOrCreateSortHoldRoot();
+            for (var i = 0; i < buffer.Count; i++)
+            {
+                buffer[i].transform.SetParent(hold, true);
+            }
+
+            for (var i = 0; i < buffer.Count; i++)
+            {
+                if (!TryPlaceItemAtFirstFreeCell(buffer[i]))
+                {
+                    buffer[i].transform.SetParent(itemsLayer, false);
+                }
+            }
+
+            for (var i = 0; i < buffer.Count; i++)
+            {
+                if (buffer[i] != null && buffer[i].transform.parent == hold)
+                {
+                    buffer[i].transform.SetParent(itemsLayer, false);
+                }
+            }
+
+            if (_scrollRect != null && enableVerticalScroll)
+            {
+                _scrollRect.verticalNormalizedPosition = 1f;
+            }
+        }
+
+        private static int CompareItemsByConfigName(InventoryItemView a, InventoryItemView b)
+        {
+            if (a == null || a.Config == null)
+            {
+                return b == null || b.Config == null ? 0 : 1;
+            }
+
+            if (b == null || b.Config == null)
+            {
+                return -1;
+            }
+
+            return string.CompareOrdinal(a.Config.name, b.Config.name);
+        }
+
+        private Transform GetOrCreateSortHoldRoot()
+        {
+            if (_sortHoldRoot != null)
+            {
+                return _sortHoldRoot;
+            }
+
+            var parent = itemsLayer != null ? itemsLayer.parent : transform;
+            var existing = parent != null ? parent.Find("_InventorySortHold") : null;
+            if (existing != null)
+            {
+                _sortHoldRoot = existing;
+                return _sortHoldRoot;
+            }
+
+            var go = new GameObject("_InventorySortHold", typeof(RectTransform));
+            _sortHoldRoot = go.transform;
+            _sortHoldRoot.SetParent(parent, false);
+            var rt = (RectTransform)_sortHoldRoot;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = Vector2.zero;
+            rt.anchoredPosition = new Vector2(8000f, 8000f);
+            return _sortHoldRoot;
+        }
+
+        private void ScrollByRowDelta(int signedRows)
+        {
+            if (!enableVerticalScroll || _scrollRect == null || gridCellsLayer == null)
+            {
+                return;
+            }
+
+            var content = _scrollRect.content;
+            var vp = _scrollRect.viewport;
+            if (content == null || vp == null)
+            {
+                return;
+            }
+
+            var scrollable = content.rect.height - vp.rect.height;
+            if (scrollable <= 1f)
+            {
+                return;
+            }
+
+            var deltaNorm = (signedRows * GetPitchY()) / scrollable;
+            var from = _scrollRect.verticalNormalizedPosition;
+            var to = Mathf.Clamp01(from + deltaNorm);
+            if (Mathf.Approximately(from, to))
+            {
+                return;
+            }
+
+            if (_scrollButtonRoutine != null)
+            {
+                StopCoroutine(_scrollButtonRoutine);
+            }
+
+            _scrollButtonRoutine = StartCoroutine(SmoothScrollVerticalRoutine(from, to));
+        }
+
+        private IEnumerator SmoothScrollVerticalRoutine(float from, float to)
+        {
+            var dur = Mathf.Max(0.02f, scrollButtonAnimDuration);
+            var elapsed = 0f;
+            while (elapsed < dur)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                var u = Mathf.Clamp01(elapsed / dur);
+                u = u * u * (3f - 2f * u);
+                _scrollRect.verticalNormalizedPosition = Mathf.Lerp(from, to, u);
+                yield return null;
+            }
+
+            _scrollRect.verticalNormalizedPosition = to;
+            _scrollButtonRoutine = null;
+        }
+
+        private void TryAutoAssignToolbarButtons()
+        {
+            var root = transform.parent;
+            if (root == null)
+            {
+                return;
+            }
+
+            if (scrollUpButton == null)
+            {
+                scrollUpButton = root.Find("ScrollUp")?.GetComponent<Button>();
+            }
+
+            if (scrollDownButton == null)
+            {
+                scrollDownButton = root.Find("ScrollDown")?.GetComponent<Button>();
+            }
+
+            if (sortInventoryButton == null)
+            {
+                sortInventoryButton = root.Find("Sorting")?.GetComponent<Button>();
+            }
+        }
+
+        private void BindToolbarListeners()
+        {
+            UnbindToolbarListeners();
+
+            if (scrollUpButton != null)
+            {
+                scrollUpButton.onClick.AddListener(ScrollUpByStep);
+                _toolbarListenersBound = true;
+            }
+
+            if (scrollDownButton != null)
+            {
+                scrollDownButton.onClick.AddListener(ScrollDownByStep);
+                _toolbarListenersBound = true;
+            }
+
+            if (sortInventoryButton != null)
+            {
+                sortInventoryButton.onClick.AddListener(SortAndPackInventoryItems);
+                _toolbarListenersBound = true;
+            }
+        }
+
+        private void UnbindToolbarListeners()
+        {
+            if (scrollUpButton != null)
+            {
+                scrollUpButton.onClick.RemoveListener(ScrollUpByStep);
+            }
+
+            if (scrollDownButton != null)
+            {
+                scrollDownButton.onClick.RemoveListener(ScrollDownByStep);
+            }
+
+            if (sortInventoryButton != null)
+            {
+                sortInventoryButton.onClick.RemoveListener(SortAndPackInventoryItems);
+            }
+
+            _toolbarListenersBound = false;
+        }
+
+        private void SetupVerticalScrollIfNeeded()
+        {
+            if (!enableVerticalScroll)
+            {
+                return;
+            }
+
+            BindMissingReferences();
+            if (itemsLayer == null || gridCellsLayer == null)
+            {
+                return;
+            }
+
+            var content = itemsLayer.parent as RectTransform;
+            if (content == null)
+            {
+                return;
+            }
+
+            _scrollRect = GetComponent<ScrollRect>();
+            if (_scrollRect == null)
+            {
+                _scrollRect = gameObject.AddComponent<ScrollRect>();
+            }
+
+            var vp = viewport != null ? viewport : transform as RectTransform;
+            _scrollRect.viewport = vp;
+            _scrollRect.content = content;
+            _scrollRect.horizontal = false;
+            _scrollRect.vertical = true;
+            _scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            _scrollRect.scrollSensitivity = scrollWheelSensitivity;
+            _scrollRect.inertia = true;
+
+            ApplyScrollContentAnchors(content);
+            RefreshScrollableContentDimensions();
+        }
+
+        private static void ApplyScrollContentAnchors(RectTransform content)
+        {
+            content.anchorMin = new Vector2(0f, 1f);
+            content.anchorMax = new Vector2(1f, 1f);
+            content.pivot = new Vector2(0.5f, 1f);
+            content.anchoredPosition = Vector2.zero;
+        }
+
+        private void RefreshScrollableContentDimensions()
+        {
+            if (!enableVerticalScroll || _scrollRect == null || gridCellsLayer == null || _scrollRect.content == null)
+            {
+                return;
+            }
+
+            var columns = Mathf.Max(1, gridCellsLayer.constraintCount);
+            var cellCount = gridCellsLayer.transform.childCount;
+            var rows = Mathf.Max(1, Mathf.CeilToInt(cellCount / (float)columns));
+            var pad = gridCellsLayer.padding;
+            var height = pad.top + pad.bottom + (rows * gridCellsLayer.cellSize.y) + (Mathf.Max(0, rows - 1) * gridCellsLayer.spacing.y);
+
+            var content = _scrollRect.content;
+            content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
+
+            var vp = _scrollRect.viewport;
+            if (vp != null)
+            {
+                content.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, vp.rect.width);
+            }
         }
 
         /// <summary>
