@@ -57,6 +57,23 @@ namespace TheLastTowerDefence.Inventory.Systems
             }
 
             var slots = activeRoot.GetComponentsInChildren<EquipmentSlotCellView>(true);
+
+            // Сначала только свободные подходящие слоты — иначе первый по иерархии Ring
+            // забирает любое новое кольцо и вытесняет уже надетое.
+            for (var i = 0; i < slots.Length; i++)
+            {
+                var s = slots[i];
+                if (s == null || !s.CanEquip(_itemView.Config) || s.EquippedItem != null)
+                {
+                    continue;
+                }
+
+                if (s.TryEquipItem(_itemView))
+                {
+                    return;
+                }
+            }
+
             for (var i = 0; i < slots.Length; i++)
             {
                 var s = slots[i];

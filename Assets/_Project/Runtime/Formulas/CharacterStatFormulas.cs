@@ -12,6 +12,11 @@ namespace TheLastTowerDefence.Formulas
     public static class CharacterStatFormulas
     {
         /// <summary>
+        /// Константа кривой <c>урон × K / (K + R)</c> для рейтинга сопротивления <c>R</c> (одинаково для всех классов).
+        /// </summary>
+        public const float DamageResistanceCurveK = 100f;
+
+        /// <summary>
         /// Excel <c>INT(x)</c> для неотрицательных значений совпадает с отбрасыванием дробной части вниз.
         /// </summary>
         public static int ExcelIntDown(float value) => Mathf.FloorToInt(value);
@@ -123,6 +128,35 @@ namespace TheLastTowerDefence.Formulas
         public static float ComputeCriticalDamageMax(float maxPhysicalDamageAfterOtherBonuses)
         {
             return Mathf.Max(0f, ExcelIntDown(maxPhysicalDamageAfterOtherBonuses * 1.5f));
+        }
+
+        /// <summary>
+        /// Рейтинг сопротивления урону (одинаковая формула для воина, лучника и клерика):
+        /// <c>MAX(0, INT(Выносливость + 0.25 × Сила))</c>. Бонусы предметов к статам уже должны входить в <paramref name="core"/>.
+        /// </summary>
+        public static int ComputeDamageResistanceRating(in CharacterCoreStats core)
+        {
+            var raw = core.Stamina + 0.25f * core.Strength;
+            return Mathf.Max(0, ExcelIntDown(raw));
+        }
+
+        /// <summary>
+        /// Входящий урон после сопротивления: <c>raw × K / (K + R)</c>, <c>R</c> — <see cref="ComputeDamageResistanceRating"/>.
+        /// </summary>
+        public static float ComputeDamageAfterResistance(float rawDamage, int resistanceRating)
+        {
+            if (rawDamage <= 0f)
+            {
+                return 0f;
+            }
+
+            if (resistanceRating <= 0)
+            {
+                return rawDamage;
+            }
+
+            var k = DamageResistanceCurveK;
+            return rawDamage * k / (k + resistanceRating);
         }
     }
 }

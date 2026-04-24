@@ -23,6 +23,7 @@ namespace TheLastTowerDefence.UI
         [SerializeField] TMP_Text critChanceContent;
         [SerializeField] TMP_Text criticalDamageContent;
         [SerializeField] TMP_Text attackSpeedContent;
+        [SerializeField] TMP_Text damageResistanceContent;
 
         void Awake()
         {
@@ -104,6 +105,7 @@ namespace TheLastTowerDefence.UI
             BindByChildName(ref critChanceContent, "CritChanceContent");
             BindByChildName(ref criticalDamageContent, "CriticalDamageContent");
             BindByChildName(ref attackSpeedContent, "AttackSpeedContent");
+            BindByChildName(ref damageResistanceContent, "DamageResistanceContent");
         }
 
         void BindByChildName(ref TMP_Text field, string objectName)
@@ -153,6 +155,7 @@ namespace TheLastTowerDefence.UI
                 SetPlaceholder(critChanceContent);
                 SetPlaceholder(criticalDamageContent);
                 SetPlaceholder(attackSpeedContent);
+                SetPlaceholder(damageResistanceContent);
                 return;
             }
 
@@ -166,6 +169,7 @@ namespace TheLastTowerDefence.UI
             SetText(
                 attackSpeedContent,
                 h.AttacksPerSecond.ToString("0.00", CultureInfo.InvariantCulture) + "/s");
+            SetText(damageResistanceContent, h.DamageResistanceRating.ToString(CultureInfo.InvariantCulture));
         }
 
         bool TryGetHeroForDisplay(out CharacterHeroStats h)

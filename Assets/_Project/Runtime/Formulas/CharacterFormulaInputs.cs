@@ -99,6 +99,14 @@ namespace TheLastTowerDefence.Formulas
         public int WillpowerBonus;
         public int LuckBonus;
 
+        [Tooltip("Плоский рейтинг брони (предметы / баффы). Не входит в CoreStats — суммируется в сопротивлении урона.")]
+        public int ArmorRatingBonus;
+
+        public float MaxHpBonus;
+        public float MaxManaBonus;
+        public float ManaRegenPerSecondBonus;
+        public float CriticalDamageBonus;
+
         public static CharacterStatModifiers None => default;
 
         public static CharacterStatModifiers Combine(in CharacterStatModifiers a, in CharacterStatModifiers b)
@@ -112,6 +120,11 @@ namespace TheLastTowerDefence.Formulas
                 IntelligenceBonus = a.IntelligenceBonus + b.IntelligenceBonus,
                 WillpowerBonus = a.WillpowerBonus + b.WillpowerBonus,
                 LuckBonus = a.LuckBonus + b.LuckBonus,
+                ArmorRatingBonus = a.ArmorRatingBonus + b.ArmorRatingBonus,
+                MaxHpBonus = a.MaxHpBonus + b.MaxHpBonus,
+                MaxManaBonus = a.MaxManaBonus + b.MaxManaBonus,
+                ManaRegenPerSecondBonus = a.ManaRegenPerSecondBonus + b.ManaRegenPerSecondBonus,
+                CriticalDamageBonus = a.CriticalDamageBonus + b.CriticalDamageBonus,
             };
         }
     }

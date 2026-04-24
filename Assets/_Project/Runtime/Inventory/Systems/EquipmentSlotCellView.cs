@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TheLastTowerDefence.Heroes.Systems;
 using TheLastTowerDefence.Inventory.Domain;
 
 namespace TheLastTowerDefence.Inventory.Systems
@@ -11,6 +12,10 @@ namespace TheLastTowerDefence.Inventory.Systems
         [SerializeField] private PlayableCharacterClass ownerClass = PlayableCharacterClass.Warrior;
         [SerializeField] private RectTransform itemAnchor;
         [SerializeField] private InventoryItemView equippedItem;
+
+        [Header("Empty slot")]
+        [Tooltip("Заглушка пустого слота. Если не задано — ищется дочерний объект EmptyHint.")]
+        [SerializeField] private GameObject emptyHint;
 
         [Header("Drag equip feedback")]
         [Tooltip("Оверлей поверх слота (raycast off). Если пусто — ищется дочерний объект Selection.")]
@@ -51,6 +56,7 @@ namespace TheLastTowerDefence.Inventory.Systems
 
             if (equippedItem == itemView)
             {
+                RefreshEmptyHintVisibility();
                 return true;
             }
 
@@ -59,6 +65,7 @@ namespace TheLastTowerDefence.Inventory.Systems
                 var displaced = equippedItem;
                 equippedItem = null;
                 displaced.SetEquippedInSlot(false);
+                RefreshEmptyHintVisibility();
 
                 var stashGrid = FindFirstObjectByType<InventoryGridView>();
                 if (stashGrid == null || !stashGrid.TryPlaceItemAtFirstFreeCell(displaced))
@@ -66,6 +73,8 @@ namespace TheLastTowerDefence.Inventory.Systems
                     equippedItem = displaced;
                     displaced.SetEquippedInSlot(true);
                     displaced.ReapplyConfigToVisuals();
+                    RefreshEmptyHintVisibility();
+                    NotifyHeroStatsDirty();
                     return false;
                 }
             }
@@ -76,6 +85,8 @@ namespace TheLastTowerDefence.Inventory.Systems
             var itemTransform = itemView.transform as RectTransform;
             if (targetParent == null || itemTransform == null)
             {
+                RefreshEmptyHintVisibility();
+                NotifyHeroStatsDirty();
                 return false;
             }
 
@@ -90,6 +101,8 @@ namespace TheLastTowerDefence.Inventory.Systems
             itemView.ReapplyConfigToVisuals();
 
             equippedItem = itemView;
+            RefreshEmptyHintVisibility();
+            NotifyHeroStatsDirty();
             return true;
         }
 
@@ -99,6 +112,8 @@ namespace TheLastTowerDefence.Inventory.Systems
             {
                 equippedItem = null;
                 itemView.SetEquippedInSlot(false);
+                RefreshEmptyHintVisibility();
+                NotifyHeroStatsDirty();
             }
         }
 
@@ -149,6 +164,13 @@ namespace TheLastTowerDefence.Inventory.Systems
         private void Awake()
         {
             BindMissingReferences();
+            RefreshEmptyHintVisibility();
+        }
+
+        private void OnEnable()
+        {
+            BindMissingReferences();
+            RefreshEmptyHintVisibility();
         }
 
         private void OnValidate()
@@ -167,7 +189,33 @@ namespace TheLastTowerDefence.Inventory.Systems
                 }
             }
 
+            BindEmptyHint();
             BindDragHighlightImage();
+        }
+
+        private void BindEmptyHint()
+        {
+            if (emptyHint != null)
+            {
+                return;
+            }
+
+            var hintTransform = transform.Find("EmptyHint");
+            if (hintTransform != null)
+            {
+                emptyHint = hintTransform.gameObject;
+            }
+        }
+
+        private void RefreshEmptyHintVisibility()
+        {
+            BindEmptyHint();
+            if (emptyHint == null)
+            {
+                return;
+            }
+
+            emptyHint.SetActive(equippedItem == null);
         }
 
         private void BindDragHighlightImage()
@@ -182,6 +230,11 @@ namespace TheLastTowerDefence.Inventory.Systems
             {
                 dragHighlightImage = selection.GetComponent<Image>();
             }
+        }
+
+        void NotifyHeroStatsDirty()
+        {
+            CharacterHeroStats.RefreshAfterEquipmentChange(ownerClass);
         }
 
         private static EquipableCharacterType ToEquipableCharacter(PlayableCharacterClass characterClass)

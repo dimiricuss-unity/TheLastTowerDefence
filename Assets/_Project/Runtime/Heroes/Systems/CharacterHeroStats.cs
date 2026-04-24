@@ -3,6 +3,8 @@ using UnityEngine;
 using TheLastTowerDefence.Common.Combat;
 using TheLastTowerDefence.Formulas;
 using TheLastTowerDefence.Heroes.Domain;
+using TheLastTowerDefence.Inventory.Domain;
+using TheLastTowerDefence.Inventory.Systems;
 
 namespace TheLastTowerDefence.Heroes.Systems
 {
@@ -37,6 +39,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         float _maxMana;
         float _currentMana;
         float _manaRegenPerSecond;
+        int _damageResistanceRating;
         bool _configured;
         CharacterCoreStats _coreStats;
 
@@ -55,6 +58,8 @@ namespace TheLastTowerDefence.Heroes.Systems
         public float CurrentMana => _currentMana;
         public float MaxMana => _maxMana;
         public float ManaRegenPerSecond => _manaRegenPerSecond;
+        /// <summary>Рейтинг сопротивления урону (выносливость + 0.25×сила, INT вниз); в бою см. <see cref="CharacterStatFormulas.ComputeDamageAfterResistance"/>.</summary>
+        public int DamageResistanceRating => _damageResistanceRating;
         public bool IsAlive => _configured && _currentHealth > 0f;
 
         public int AvailableSkillPoints => _availableSkillPoints;
@@ -120,6 +125,38 @@ namespace TheLastTowerDefence.Heroes.Systems
         }
 
         /// <summary>
+        /// Класс персонажа для сопоставления со слотами экипировки в UI (Knight → воин и т.д.).
+        /// </summary>
+        public PlayableCharacterClass GetPlayableCharacterClass()
+        {
+            return gameObject.name switch
+            {
+                "Knight" => PlayableCharacterClass.Warrior,
+                "Archer" => PlayableCharacterClass.Archer,
+                "Cleric" => PlayableCharacterClass.Cleric,
+                _ => PlayableCharacterClass.Warrior,
+            };
+        }
+
+        /// <summary>
+        /// Пересчёт статов после смены экипировки в окне этого класса (слоты ищутся по сцене, в т.ч. неактивные окна).
+        /// </summary>
+        public static void RefreshAfterEquipmentChange(PlayableCharacterClass ownerClass)
+        {
+            var heroes = UnityEngine.Object.FindObjectsByType<CharacterHeroStats>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None);
+            for (var i = 0; i < heroes.Length; i++)
+            {
+                var h = heroes[i];
+                if (h != null && h.GetPlayableCharacterClass() == ownerClass)
+                {
+                    h.ApplyDerivedStats();
+                }
+            }
+        }
+
+        /// <summary>
         /// Пересчитывает производные параметры из конфига, оружия и текущих <see cref="statModifiers"/>.
         /// Вызывайте после смены экипировки или баффов (когда появится тот слой).
         /// </summary>
@@ -129,21 +166,31 @@ namespace TheLastTowerDefence.Heroes.Systems
             {
                 _configured = false;
                 _coreStats = default;
+                _damageResistanceRating = 0;
                 Debug.LogError($"[{nameof(CharacterHeroStats)}] HeroStatsConfig is not assigned on '{name}'.", this);
                 return;
             }
 
             var coreBase = CharacterCoreStats.FromHeroConfig(config, _runtimeLevel);
+            var ownerClass = GetPlayableCharacterClass();
+            EquippedItemBonusCollector.CollectForOwner(ownerClass, out var equipMods, out var weaponDelta);
+
             var skillMods = CharacterStatModifiers.Combine(_committedSkillBonuses, _sessionSkillBonuses);
-            var allMods = CharacterStatModifiers.Combine(statModifiers, skillMods);
+            var allMods = CharacterStatModifiers.Combine(
+                CharacterStatModifiers.Combine(statModifiers, equipMods),
+                skillMods);
+
             var core = CharacterCoreStats.ApplyModifiers(coreBase, allMods);
             _coreStats = core;
 
-            var weapon = ResolveWeaponStatsFromConfig();
+            var weapon = EquippedItemBonusCollector.MergeWeaponWithEquipmentDelta(
+                ResolveWeaponStatsFromConfig(),
+                weaponDelta);
 
-            _maxHealth = CharacterStatFormulas.ComputeMaxHitPoints(core);
-            _maxMana = CharacterStatFormulas.ComputeMaxMana(core);
-            _manaRegenPerSecond = CharacterStatFormulas.ComputeManaRegenPerSecond(core);
+            _maxHealth = Mathf.Max(1f, CharacterStatFormulas.ComputeMaxHitPoints(core) + allMods.MaxHpBonus);
+            _maxMana = Mathf.Max(0f, CharacterStatFormulas.ComputeMaxMana(core) + allMods.MaxManaBonus);
+            _manaRegenPerSecond = CharacterStatFormulas.ComputeManaRegenPerSecond(core) + allMods.ManaRegenPerSecondBonus;
+            _manaRegenPerSecond = Mathf.Max(0f, _manaRegenPerSecond);
             _attacksPerSecond = CharacterStatFormulas.ComputeAttacksPerSecond(core, weapon, config.attackSpeedScaling);
             _critChancePercent = CharacterStatFormulas.ComputeCritChancePercent(core, weapon);
 
@@ -157,8 +204,19 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (_criticalDamageMin > _criticalDamageMax)
                 (_criticalDamageMin, _criticalDamageMax) = (_criticalDamageMax, _criticalDamageMin);
 
+            if (Mathf.Abs(allMods.CriticalDamageBonus) > 1e-5f)
+            {
+                _criticalDamageMin += allMods.CriticalDamageBonus;
+                _criticalDamageMax += allMods.CriticalDamageBonus;
+                if (_criticalDamageMin > _criticalDamageMax)
+                    (_criticalDamageMin, _criticalDamageMax) = (_criticalDamageMax, _criticalDamageMin);
+            }
+
+            _damageResistanceRating = Mathf.Max(
+                0,
+                CharacterStatFormulas.ComputeDamageResistanceRating(core) + allMods.ArmorRatingBonus);
+
             var wasConfigured = _configured;
-            _maxHealth = Mathf.Max(1f, _maxHealth);
             _attacksPerSecond = Mathf.Max(0.01f, _attacksPerSecond);
 
             if (!wasConfigured)
@@ -390,9 +448,13 @@ namespace TheLastTowerDefence.Heroes.Systems
             if (!_configured || !IsAlive || amount <= 0f)
                 return;
 
-            _currentHealth = Mathf.Max(0f, _currentHealth - amount);
+            var dealt = CharacterStatFormulas.ComputeDamageAfterResistance(amount, _damageResistanceRating);
+            if (dealt <= 0f)
+                return;
+
+            _currentHealth = Mathf.Max(0f, _currentHealth - dealt);
             HealthChanged?.Invoke(_currentHealth, _maxHealth);
-            Debug.Log($"[Hero HP after hit] {_currentHealth:F1} / {_maxHealth} ('{name}')");
+            Debug.Log($"[Hero HP after hit] {_currentHealth:F1} / {_maxHealth} ('{name}', raw={amount:F1}, dealt={dealt:F1}, R={_damageResistanceRating})");
 
             if (_currentHealth <= 0f)
                 Die();

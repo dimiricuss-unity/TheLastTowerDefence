@@ -119,5 +119,24 @@ namespace TheLastTowerDefence.Tests
 
             Assert.Greater(maxDexBuild, maxStrBuildWithDexPrimary);
         }
+
+        [Test]
+        public void ComputeDamageResistanceRating_is_stamina_plus_quarter_strength_int_down()
+        {
+            var core = new CharacterCoreStats(0, 5, 0, 10, 0, 0, 0);
+            Assert.AreEqual(11, CharacterStatFormulas.ComputeDamageResistanceRating(core));
+
+            var low = new CharacterCoreStats(0, 3, 0, 0, 0, 0, 0);
+            Assert.AreEqual(0, CharacterStatFormulas.ComputeDamageResistanceRating(low));
+        }
+
+        [Test]
+        public void ComputeDamageAfterResistance_scales_with_rating_and_k()
+        {
+            var raw = 50f;
+            Assert.AreEqual(50f, CharacterStatFormulas.ComputeDamageAfterResistance(raw, 0), 1e-5f);
+            Assert.AreEqual(25f, CharacterStatFormulas.ComputeDamageAfterResistance(raw, 100), 1e-5f);
+            Assert.AreEqual(0f, CharacterStatFormulas.ComputeDamageAfterResistance(0f, 50));
+        }
     }
 }

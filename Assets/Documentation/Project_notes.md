@@ -13,6 +13,15 @@
 
 ## Журнал
 
+### 2026-04-24
+
+- **ПКМ экипировка нескольких колец:** `InventoryItemRightClickHandler` — сначала перебор только **свободных** подходящих слотов (`EquippedItem == null`), затем при полной занятости типа — прежняя логика с заменой в первом подходящем слоте (иначе второе кольцо всегда попадало в первый слот по иерархии и вытесняло первое).
+- **Заглушка пустого слота:** `EquipmentSlotCellView` — опциональное поле / авто-поиск дочернего **`EmptyHint`**; `RefreshEmptyHintVisibility()` (`SetActive` при пустом/занятом слоте); вызовы при смене `equippedItem`, `Awake`, `OnEnable`.
+- **Сопротивление урону (рейтинг + K):** `CharacterStatFormulas` — **`DamageResistanceCurveK = 100`**, **`ComputeDamageResistanceRating`**: `MAX(0, INT(Выносливость + 0.25×Сила))` одинаково для всех классов; **`ComputeDamageAfterResistance(raw, R)`** — `raw × K/(K+R)` при `R > 0`. `CharacterHeroStats` — кэш **`DamageResistanceRating`**, в **`ApplyDamage`** списывается уже **mitigated** урон; лог raw/dealt/R. UI вкладки параметров: **`CharacterWindowParametersView`** — поле / биндинг **`DamageResistanceContent`** (TMP по имени).
+- **Расширение предмета (`InventoryItemConfig`):** текст `displayName` / `description` (TextArea); база оружия `weaponBase*` + **`weaponArmorRating`**; бонусы характеристик `bonus*`; боевые бонусы `bonusMaxHp`, `bonusMaxMana`, `bonusManaRegenPerSecond`, `bonusCriticalDamage`; **`price`** (пока без логики). Нулевые значения в рантайме не используются.
+- **Применение бонусов с экипировки:** `CharacterStatModifiers` (`CharacterFormulaInputs.cs`) — добавлены **`ArmorRatingBonus`**, **`MaxHpBonus`**, **`MaxManaBonus`**, **`ManaRegenPerSecondBonus`**, **`CriticalDamageBonus`** и суммирование в **`Combine`** (не входят в `CharacterCoreStats.ApplyModifiers`). **`EquippedItemBonusCollector`** — обход всех **`EquipmentSlotCellView`** с **`FindObjectsInactive.Include`**, сумма ненулевых полей конфигов по **`OwnerClass`**; **`MergeWeaponWithEquipmentDelta`** к базовому оружию из `HeroStatsConfig`. **`CharacterHeroStats.ApplyDerivedStats`**: порядок модификаторов `statModifiers` + экипировка + скилл-сессия; производные + плоские бонусы; рейтинг сопротивления = формула по core + **`ArmorRatingBonus`**; крит min/max после формул + **`CriticalDamageBonus`**. **`GetPlayableCharacterClass()`** по имени объекта (`Knight`/`Archer`/`Cleric`); **`RefreshAfterEquipmentChange(PlayableCharacterClass)`**. **`EquipmentSlotCellView`** — вызов пересчёта после успешного экипа/снятия и откатов.
+- **Тесты:** `CharacterStatFormulasTests` — кейсы рейтинга сопротивления и `ComputeDamageAfterResistance`.
+
 ### 2026-04-23
 
 - **Общий инвентарь и вкладки окон героя:** `CharacterWindowTabsController` — общий объект `Inventory` под родителем `CharacterWindows` показывается только на вкладке **Inventory**; при других вкладках скрывается. При `OnDisable` окна героя подсветка/видимость сбрасывается. `CharacterWindowsController.SetActiveCharacterWindow` — сначала **выключаются все три окна**, затем включается нужное (чтобы `OnDisable` старого окна не гасил инвентарь после `OnEnable` нового).
