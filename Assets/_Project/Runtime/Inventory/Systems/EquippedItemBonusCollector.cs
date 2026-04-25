@@ -5,7 +5,7 @@ using TheLastTowerDefence.Inventory.Domain;
 namespace TheLastTowerDefence.Inventory.Systems
 {
     /// <summary>
-    /// Суммирует ненулевые поля <see cref="InventoryItemConfig"/> со всех слотов экипировки владельца (в т.ч. на неактивных окнах).
+    /// Суммирует ненулевые поля <see cref="InventoryItemStatsConfig"/> со всех слотов экипировки владельца (в т.ч. на неактивных окнах).
     /// </summary>
     public static class EquippedItemBonusCollector
     {
@@ -46,79 +46,85 @@ namespace TheLastTowerDefence.Inventory.Systems
             ref CharacterStatModifiers m,
             ref CharacterWeaponStats w)
         {
-            if (c.bonusStrength != 0)
+            var stats = c.statsConfig;
+            if (stats == null)
             {
-                m.StrengthBonus += c.bonusStrength;
+                return;
             }
 
-            if (c.bonusDexterity != 0)
+            if (stats.bonusStrength != 0)
             {
-                m.DexterityBonus += c.bonusDexterity;
+                m.StrengthBonus += stats.bonusStrength;
             }
 
-            if (c.bonusStamina != 0)
+            if (stats.bonusDexterity != 0)
             {
-                m.StaminaBonus += c.bonusStamina;
+                m.DexterityBonus += stats.bonusDexterity;
             }
 
-            if (c.bonusIntelligence != 0)
+            if (stats.bonusStamina != 0)
             {
-                m.IntelligenceBonus += c.bonusIntelligence;
+                m.StaminaBonus += stats.bonusStamina;
             }
 
-            if (c.bonusWillpower != 0)
+            if (stats.bonusIntelligence != 0)
             {
-                m.WillpowerBonus += c.bonusWillpower;
+                m.IntelligenceBonus += stats.bonusIntelligence;
             }
 
-            if (c.bonusLuck != 0)
+            if (stats.bonusWillpower != 0)
             {
-                m.LuckBonus += c.bonusLuck;
+                m.WillpowerBonus += stats.bonusWillpower;
             }
 
-            if (c.weaponArmorRating != 0)
+            if (stats.bonusLuck != 0)
             {
-                m.ArmorRatingBonus += c.weaponArmorRating;
+                m.LuckBonus += stats.bonusLuck;
             }
 
-            if (Mathf.Abs(c.bonusMaxHp) > Epsilon)
+            if (stats.weaponArmorRating != 0)
             {
-                m.MaxHpBonus += c.bonusMaxHp;
+                m.ArmorRatingBonus += stats.weaponArmorRating;
             }
 
-            if (Mathf.Abs(c.bonusMaxMana) > Epsilon)
+            if (Mathf.Abs(stats.bonusMaxHp) > Epsilon)
             {
-                m.MaxManaBonus += c.bonusMaxMana;
+                m.MaxHpBonus += stats.bonusMaxHp;
             }
 
-            if (Mathf.Abs(c.bonusManaRegenPerSecond) > Epsilon)
+            if (Mathf.Abs(stats.bonusMaxMana) > Epsilon)
             {
-                m.ManaRegenPerSecondBonus += c.bonusManaRegenPerSecond;
+                m.MaxManaBonus += stats.bonusMaxMana;
             }
 
-            if (Mathf.Abs(c.bonusCriticalDamage) > Epsilon)
+            if (Mathf.Abs(stats.bonusManaRegenPerSecond) > Epsilon)
             {
-                m.CriticalDamageBonus += c.bonusCriticalDamage;
+                m.ManaRegenPerSecondBonus += stats.bonusManaRegenPerSecond;
             }
 
-            if (Mathf.Abs(c.weaponBaseMinDamage) > Epsilon)
+            if (Mathf.Abs(stats.bonusCriticalDamage) > Epsilon)
             {
-                w.weaponMinDamage += c.weaponBaseMinDamage;
+                m.CriticalDamageBonus += stats.bonusCriticalDamage;
             }
 
-            if (Mathf.Abs(c.weaponBaseMaxDamage) > Epsilon)
+            if (Mathf.Abs(stats.weaponBaseMinDamage) > Epsilon)
             {
-                w.weaponMaxDamage += c.weaponBaseMaxDamage;
+                w.weaponMinDamage += stats.weaponBaseMinDamage;
             }
 
-            if (Mathf.Abs(c.weaponBaseAttacksPerSecond) > Epsilon)
+            if (Mathf.Abs(stats.weaponBaseMaxDamage) > Epsilon)
             {
-                w.weaponAttacksPerSecond += c.weaponBaseAttacksPerSecond;
+                w.weaponMaxDamage += stats.weaponBaseMaxDamage;
             }
 
-            if (Mathf.Abs(c.weaponBaseCritModifier) > Epsilon)
+            if (Mathf.Abs(stats.weaponBaseAttacksPerSecond) > Epsilon)
             {
-                w.weaponCritModifier += c.weaponBaseCritModifier;
+                w.weaponAttacksPerSecond += stats.weaponBaseAttacksPerSecond;
+            }
+
+            if (Mathf.Abs(stats.weaponBaseCritModifier) > Epsilon)
+            {
+                w.weaponCritModifier += stats.weaponBaseCritModifier;
             }
         }
 

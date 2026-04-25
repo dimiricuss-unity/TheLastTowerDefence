@@ -18,10 +18,13 @@ namespace TheLastTowerDefence.Inventory.Systems
         [SerializeField] private Image iconImage;
         [SerializeField] private LayoutElement layoutElement;
         [SerializeField] private bool isEquippedInSlot;
+        [SerializeField] private bool hasRuntimeIconTint;
+        [SerializeField] private Color runtimeIconTint = Color.white;
 
         public InventoryItemConfig Config => config;
         public int SizeInCellsX => config != null ? Mathf.Max(1, config.sizeInCellsX) : 1;
         public int SizeInCellsY => config != null ? Mathf.Max(1, config.sizeInCellsY) : 1;
+        public bool IsEquippedInSlot => isEquippedInSlot;
 
         private void Reset()
         {
@@ -62,6 +65,22 @@ namespace TheLastTowerDefence.Inventory.Systems
         public void SetEquippedInSlot(bool equipped)
         {
             isEquippedInSlot = equipped;
+        }
+
+        public void SetRuntimeConfig(InventoryItemConfig runtimeConfig)
+        {
+            config = runtimeConfig;
+            isEquippedInSlot = false;
+            BindMissingReferences();
+            ApplyConfigToVisuals();
+        }
+
+        public void SetRuntimeIconTint(Color tint)
+        {
+            hasRuntimeIconTint = true;
+            runtimeIconTint = tint;
+            BindMissingReferences();
+            ApplyConfigToVisuals();
         }
 
         private void BindMissingReferences()
@@ -120,9 +139,19 @@ namespace TheLastTowerDefence.Inventory.Systems
             if (iconImage != null)
             {
                 iconImage.sprite = config.itemIcon;
-                iconImage.color = config.itemIcon != null
-                    ? new Color(1f, 1f, 1f, 1f)
-                    : new Color(1f, 1f, 1f, 0f);
+                if (config.itemIcon == null)
+                {
+                    iconImage.color = new Color(1f, 1f, 1f, 0f);
+                }
+                else if (hasRuntimeIconTint)
+                {
+                    runtimeIconTint.a = 1f;
+                    iconImage.color = runtimeIconTint;
+                }
+                else
+                {
+                    iconImage.color = new Color(1f, 1f, 1f, 1f);
+                }
                 iconImage.preserveAspect = true;
             }
         }

@@ -10,31 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff27576491ad79948860396587984645, type: 3}
-  m_Name: Saber
+  m_Name: Saber_1
   m_EditorClassIdentifier: 
   itemIcon: {fileID: 21300000, guid: 9f60036bf5c14db4780e7f8e85487c82, type: 3}
-  displayName: "\u0421\u043E\u043B\u0434\u0430\u0442\u0441\u043A\u0430\u044F \u0441\u0430\u0431\u043B\u044F"
+  displayName: "\u041A\u0430\u0432\u0430\u043B\u0435\u0440\u0438\u0439\u0441\u043A\u0430\u044F
+    \u0441\u0430\u0431\u043B\u044F"
   description: "\u041E\u0431\u044B\u0447\u043D\u0430\u044F \u0441\u043E\u043B\u0434\u0430\u0442\u0441\u043A\u0430\u044F
     \u0441\u0430\u0431\u043B\u044F. \u0412\u044B\u0434\u0430\u0432\u0430\u043B\u0430\u0441\u044C
     \u043B\u0451\u0433\u043A\u0438\u043C \u043A\u0430\u0432\u0430\u043B\u0435\u0440\u0438\u0441\u0442\u0430\u043C
     \u043A\u0430\u043A \u043E\u0441\u043D\u043E\u0432\u043D\u043E\u0435 \u043E\u0440\u0443\u0436\u0438\u0435."
   slotType: 2
   equipableCharacter: 0
-  weaponBaseMinDamage: 6
-  weaponBaseMaxDamage: 8
-  weaponBaseAttacksPerSecond: 0.33
-  weaponBaseCritModifier: 2
-  weaponArmorRating: 0
-  bonusStrength: 0
-  bonusDexterity: 1
-  bonusStamina: 0
-  bonusIntelligence: 0
-  bonusWillpower: 0
-  bonusLuck: 0
-  bonusMaxHp: 0
-  bonusMaxMana: 0
-  bonusManaRegenPerSecond: 0
-  bonusCriticalDamage: 0
-  price: 15
+  statsConfig: {fileID: 0}
   sizeInCellsX: 1
   sizeInCellsY: 4

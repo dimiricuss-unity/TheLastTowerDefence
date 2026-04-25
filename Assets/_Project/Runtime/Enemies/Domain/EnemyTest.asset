@@ -17,3 +17,23 @@ MonoBehaviour:
   attacksPerSecond: 1
   experience: 75
   isMeleeAttacker: 1
+  totalLootDropChancePercent: 5
+  lootDropSections:
+  - rarity: 0
+    lootDropChancePercent: 70
+    isEnabledInRoll: 1
+  - rarity: 1
+    lootDropChancePercent: 20
+    isEnabledInRoll: 1
+  - rarity: 2
+    lootDropChancePercent: 10
+    isEnabledInRoll: 1
+  - rarity: 3
+    lootDropChancePercent: 0
+    isEnabledInRoll: 0
+  - rarity: 4
+    lootDropChancePercent: 0
+    isEnabledInRoll: 0
+  - rarity: 5
+    lootDropChancePercent: 0
+    isEnabledInRoll: 0

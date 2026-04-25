@@ -13,6 +13,17 @@
 
 ## Журнал
 
+### 2026-04-26
+
+- **Лут/редкости врагов и секции дропа:** `EnemyStatsConfig` расширен: общий `%` дропа `totalLootDropChancePercent` + 6 секций `LootDropSection` (`Base/Rare/Magic/Legendary/Epic/Relict`) с полями редкости, шанса и чекбокса участия; добавлен `PropertyDrawer` `EnemyLootDropSectionDrawer` для компактного отображения строк в инспекторе.
+- **Дроп сундуков по смерти врага:** добавлен `EnemyLootDropper` (привязан к `EnemyHealth.Died`) — ролл общего шанса, затем weighted-выбор активной секции и спавн сундука соответствующей редкости; компонент подключён на префабе `Assets/_Project/Prefabs/Enemies/Enemy.prefab`; инициализация через `EnemyStatsBootstrap`.
+- **Разделение конфигов предметов:** `InventoryItemConfig` оставлен как «база UI/слота/размера» + ссылка на `InventoryItemStatsConfig`; боевые/экономические поля вынесены в `InventoryItemStatsConfig`; добавлен `InventoryItemStatsRangeConfig` (диапазоны min/max для генерации), `InventoryItemRarity`, и поля редкости в stats/range-конфигах.
+- **Параметры визуала предмета:** в `InventoryItemStatsRangeConfig` добавлен `iconColor`; при генерации цвет применяется к `InventoryItem/Icon` через `InventoryItemView.SetRuntimeIconTint(...)`.
+- **AmmunitionCatalog как конструктор предметов:** `AmmunitionCatalog` расширен генерацией runtime-предмета по редкости сундука: выбор `InventoryItemStatsRangeConfig` из `ItemStatsRangesByRarity`, ролл значений по диапазонам (поля `0..0` не участвуют), подбор `InventoryItemConfig` строго по `slotType + equipableCharacter`, создание runtime `InventoryItemStatsConfig`/`InventoryItemConfig`, инстанс `InventoryItem` prefab с присвоением runtime-config.
+- **Сундук как контейнер готового предмета:** добавлен `EnemyLootChestContainer` для хранения `InventoryItemView` в сундуке до подбора; `EnemyLootDropper` после спавна сундука кладёт в него собранный предмет.
+- **CollectButton (сбор лута):** добавлен `CollectLootButton` на UI-кнопку `CollectButton` — по клику забирает предметы из всех сундуков на сцене в `InventoryGridView`; после успешного переноса сундук уничтожается; при отсутствии места предмет возвращается в сундук.
+- **Фиксы инвентаря и drag/drop:** устранён баг «предмет исчезает/улетает» — `InventoryItemDragHandler` теперь использует корректный drag-canvas (не `Enemy/HitBarCanvas`), жёстче восстанавливает размещение в сетке, не отправляет предметы в неактивные гриды; `CollectLootButton` не трогает экипированные предметы (через `InventoryItemView.IsEquippedInSlot`).
+
 ### 2026-04-24
 
 - **ПКМ экипировка нескольких колец:** `InventoryItemRightClickHandler` — сначала перебор только **свободных** подходящих слотов (`EquippedItem == null`), затем при полной занятости типа — прежняя логика с заменой в первом подходящем слоте (иначе второе кольцо всегда попадало в первый слот по иерархии и вытесняло первое).

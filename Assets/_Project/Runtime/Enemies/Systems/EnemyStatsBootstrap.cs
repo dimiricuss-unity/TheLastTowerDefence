@@ -21,6 +21,7 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] EnemyMovement movement;
         [SerializeField] EnemyAttack attack;
         [SerializeField] EnemyHeroFocus heroFocus;
+        [SerializeField] EnemyLootDropper lootDropper;
 
         void Reset()
         {
@@ -28,10 +29,13 @@ namespace TheLastTowerDefence.Enemies.Systems
             movement = GetComponent<EnemyMovement>();
             attack = GetComponent<EnemyAttack>();
             heroFocus = GetComponent<EnemyHeroFocus>();
+            lootDropper = GetComponent<EnemyLootDropper>();
         }
 
         void Awake()
         {
+            EnsureReferences();
+
             if (config == null)
             {
                 Debug.LogError($"[{nameof(EnemyStatsBootstrap)}] Не назначен EnemyStatsConfig на '{name}'.", this);
@@ -67,6 +71,22 @@ namespace TheLastTowerDefence.Enemies.Systems
             attack.Configure(config, combatTarget);
             if (heroFocus != null)
                 heroFocus.Initialize(combatTarget, config.isMeleeAttacker);
+            if (lootDropper != null)
+                lootDropper.Configure(config);
+        }
+
+        void EnsureReferences()
+        {
+            if (health == null)
+                health = GetComponent<EnemyHealth>();
+            if (movement == null)
+                movement = GetComponent<EnemyMovement>();
+            if (attack == null)
+                attack = GetComponent<EnemyAttack>();
+            if (heroFocus == null)
+                heroFocus = GetComponent<EnemyHeroFocus>();
+            if (lootDropper == null)
+                lootDropper = GetComponent<EnemyLootDropper>();
         }
     }
 }

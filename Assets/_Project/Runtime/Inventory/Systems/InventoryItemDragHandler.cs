@@ -31,13 +31,13 @@ namespace TheLastTowerDefence.Inventory.Systems
             _rectTransform = GetComponent<RectTransform>();
             _canvasGroup = GetComponent<CanvasGroup>();
             _itemView = GetComponent<InventoryItemView>();
-            _canvas = GetComponentInParent<Canvas>();
-            if (_canvas == null)
-            {
-                _canvas = FindFirstObjectByType<Canvas>();
-            }
+            _canvas = ResolveBestDragCanvas();
 
-            _gridView = FindFirstObjectByType<InventoryGridView>();
+            _gridView = GetComponentInParent<InventoryGridView>();
+            if (_gridView == null)
+            {
+                _gridView = FindFirstObjectByType<InventoryGridView>();
+            }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -47,7 +47,11 @@ namespace TheLastTowerDefence.Inventory.Systems
                 return;
             }
 
-            _gridView = FindFirstObjectByType<InventoryGridView>();
+            _gridView = GetComponentInParent<InventoryGridView>();
+            if (_gridView == null)
+            {
+                _gridView = FindFirstObjectByType<InventoryGridView>();
+            }
             if (_gridView == null)
             {
                 return;
@@ -58,6 +62,7 @@ namespace TheLastTowerDefence.Inventory.Systems
             _originAnchorMin = _rectTransform.anchorMin;
             _originAnchorMax = _rectTransform.anchorMax;
             _originPivot = _rectTransform.pivot;
+            _canvas = ResolveBestDragCanvas();
             _originSlot = GetComponentInParent<EquipmentSlotCellView>();
             if (_originSlot != null)
             {
@@ -161,6 +166,7 @@ namespace TheLastTowerDefence.Inventory.Systems
             }
 
             RestoreOrigin();
+            EnsureItemStillPlacedSomewhere();
             _canvasGroup.blocksRaycasts = true;
             _canvasGroup.alpha = 1f;
         }
@@ -239,9 +245,80 @@ namespace TheLastTowerDefence.Inventory.Systems
             _rectTransform.pivot = _originPivot;
             _rectTransform.anchoredPosition = _originAnchoredPosition;
 
-            if (_originSlot != null)
+            if (_originSlot != null && !_originSlot.TryEquipItem(_itemView))
             {
-                _originSlot.TryEquipItem(_itemView);
+                TryPlaceItemInAnyInventoryGrid();
+            }
+        }
+
+        private void EnsureItemStillPlacedSomewhere()
+        {
+            if (_itemView == null)
+            {
+                return;
+            }
+
+            _itemView.gameObject.SetActive(true);
+
+            var slot = _itemView.GetComponentInParent<EquipmentSlotCellView>();
+            if (slot != null && slot.EquippedItem == _itemView)
+            {
+                return;
+            }
+
+            var grids = FindObjectsByType<InventoryGridView>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (var i = 0; i < grids.Length; i++)
+            {
+                var g = grids[i];
+                if (g != null && g.ItemsLayer != null && _itemView.transform.IsChildOf(g.ItemsLayer))
+                {
+                    return;
+                }
+            }
+
+            TryPlaceItemInAnyInventoryGrid();
+        }
+
+        void TryPlaceItemInAnyInventoryGrid()
+        {
+            if (_itemView == null || _itemView.Config == null)
+            {
+                return;
+            }
+
+            _gridView = _gridView != null
+                ? _gridView
+                : FindFirstObjectByType<InventoryGridView>();
+
+            if (_gridView != null && _gridView.ItemsLayer != null && _itemView.transform.IsChildOf(_gridView.ItemsLayer))
+            {
+                return;
+            }
+
+            if (_originParent != null)
+            {
+                var originGrid = _originParent.GetComponentInParent<InventoryGridView>();
+                if (originGrid != null && originGrid.ItemsLayer != null && originGrid.TryPlaceItemAtFirstFreeCell(_itemView))
+                {
+                    _gridView = originGrid;
+                    return;
+                }
+            }
+
+            var grids = FindObjectsByType<InventoryGridView>(FindObjectsSortMode.None);
+            for (var i = 0; i < grids.Length; i++)
+            {
+                var g = grids[i];
+                if (g == null || g.ItemsLayer == null)
+                {
+                    continue;
+                }
+
+                if (g.TryPlaceItemAtFirstFreeCell(_itemView))
+                {
+                    _gridView = g;
+                    return;
+                }
             }
         }
 
@@ -280,6 +357,29 @@ namespace TheLastTowerDefence.Inventory.Systems
 
             _grabbedCellOffsetX = Mathf.Clamp(Mathf.FloorToInt(xFromLeft / pitchX), 0, widthCells - 1);
             _grabbedCellOffsetY = Mathf.Clamp(Mathf.FloorToInt(yFromTop / pitchY), 0, heightCells - 1);
+        }
+
+        private Canvas ResolveBestDragCanvas()
+        {
+            // Highest priority: canvas of current grid/inventory hierarchy.
+            if (_gridView != null)
+            {
+                var gridCanvas = _gridView.GetComponentInParent<Canvas>();
+                if (gridCanvas != null)
+                {
+                    return gridCanvas.rootCanvas != null ? gridCanvas.rootCanvas : gridCanvas;
+                }
+            }
+
+            // Fallback: nearest canvas from current item hierarchy.
+            var ownCanvas = GetComponentInParent<Canvas>();
+            if (ownCanvas != null)
+            {
+                return ownCanvas.rootCanvas != null ? ownCanvas.rootCanvas : ownCanvas;
+            }
+
+            // Last resort: active scene canvas (avoid inactive/foreign canvases).
+            return FindFirstObjectByType<Canvas>();
         }
     }
 }

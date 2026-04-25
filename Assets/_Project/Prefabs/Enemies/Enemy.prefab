@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 459001003}
   - component: {fileID: 459001004}
   - component: {fileID: 459001005}
+  - component: {fileID: 8225110097798866812}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
@@ -121,6 +122,7 @@ MonoBehaviour:
   movement: {fileID: 459001003}
   attack: {fileID: 459001004}
   heroFocus: {fileID: 459001005}
+  lootDropper: {fileID: 0}
 --- !u!114 &459001002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -181,6 +183,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movement: {fileID: 459001003}
+--- !u!114 &8225110097798866812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212243659424581915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c21e736fb711184b90b6b1e255de4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseChestPrefab: {fileID: 2841604625632856411, guid: 15afa2f4091e7104d879d14436415323, type: 3}
+  rareChestPrefab: {fileID: 2841604625632856411, guid: b000e9bf98d90634e80ecdf931f36358, type: 3}
+  magicChestPrefab: {fileID: 2841604625632856411, guid: 73ed87394b4eeaa49a5352a093ad7702, type: 3}
+  legendaryChestPrefab: {fileID: 0}
+  epicChestPrefab: {fileID: 0}
+  relictChestPrefab: {fileID: 0}
 --- !u!1 &1399424355964814278
 GameObject:
   m_ObjectHideFlags: 0
