@@ -92,6 +92,11 @@ namespace TheLastTowerDefence.Inventory.Systems
                 m.MaxHpBonus += stats.bonusMaxHp;
             }
 
+            if (Mathf.Abs(stats.bonusHpRegenPerSecond) > Epsilon)
+            {
+                m.HpRegenPerSecondBonus += stats.bonusHpRegenPerSecond;
+            }
+
             if (Mathf.Abs(stats.bonusMaxMana) > Epsilon)
             {
                 m.MaxManaBonus += stats.bonusMaxMana;

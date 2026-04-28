@@ -18,12 +18,17 @@ namespace TheLastTowerDefence.UI
         [SerializeField] TMP_Text hpContent;
         [SerializeField] TMP_Text manaContent;
         [SerializeField] TMP_Text manaRestoreContent;
+        [SerializeField] TMP_Text hpRestoreContent;
         [SerializeField] TMP_Text minimumDamageContent;
         [SerializeField] TMP_Text maximumDamageContent;
         [SerializeField] TMP_Text critChanceContent;
         [SerializeField] TMP_Text criticalDamageContent;
         [SerializeField] TMP_Text attackSpeedContent;
         [SerializeField] TMP_Text damageResistanceContent;
+
+        [Header("HPRestore Visual")]
+        [SerializeField] Color hpRestoreDefaultColor = Color.white;
+        [SerializeField] Color hpRestoreActiveBonusColor = new(0.45f, 1f, 0.45f, 1f);
 
         void Awake()
         {
@@ -100,6 +105,7 @@ namespace TheLastTowerDefence.UI
             BindByChildName(ref hpContent, "HpContent");
             BindByChildName(ref manaContent, "ManaContent");
             BindByChildName(ref manaRestoreContent, "ManaRestoreContent");
+            BindByChildName(ref hpRestoreContent, "HPRestoreContent");
             BindByChildName(ref minimumDamageContent, "MinimumDamageContent");
             BindByChildName(ref maximumDamageContent, "MaximumDamageContent");
             BindByChildName(ref critChanceContent, "CritChanceContent");
@@ -150,6 +156,8 @@ namespace TheLastTowerDefence.UI
             if (!TryGetHeroForDisplay(out var h))
             {
                 SetPlaceholder(manaRestoreContent);
+                SetPlaceholder(hpRestoreContent);
+                ApplyHpRestoreColor(false);
                 SetPlaceholder(minimumDamageContent);
                 SetPlaceholder(maximumDamageContent);
                 SetPlaceholder(critChanceContent);
@@ -160,6 +168,8 @@ namespace TheLastTowerDefence.UI
             }
 
             SetText(manaRestoreContent, $"{FormatInt(h.ManaRegenPerSecond)}/s");
+            SetText(hpRestoreContent, $"{FormatRegen(h.HpRegenPerSecond)}/s");
+            ApplyHpRestoreColor(h.HpRegenPerSecond > 0f);
             SetText(minimumDamageContent, FormatInt(h.MinDamage));
             SetText(maximumDamageContent, FormatInt(h.MaxDamage));
             SetText(critChanceContent, $"{FormatInt(h.CritChancePercent)}%");
@@ -194,6 +204,19 @@ namespace TheLastTowerDefence.UI
             }
         }
 
+        void ApplyHpRestoreColor(bool hasActiveBonus)
+        {
+            if (hpRestoreContent == null)
+            {
+                return;
+            }
+
+            hpRestoreContent.color = hasActiveBonus
+                ? hpRestoreActiveBonusColor
+                : hpRestoreDefaultColor;
+        }
+
         static string FormatInt(float value) => Mathf.RoundToInt(value).ToString(CultureInfo.InvariantCulture);
+        static string FormatRegen(float value) => value.ToString("0.0", CultureInfo.InvariantCulture);
     }
 }

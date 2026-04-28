@@ -13,20 +13,28 @@ namespace TheLastTowerDefence.Inventory.Systems
     public sealed class InventoryItemRightClickHandler : MonoBehaviour, IPointerClickHandler
     {
         private InventoryItemView _itemView;
+        private InventoryItemPopupController _popupController;
 
         private void Awake()
         {
             _itemView = GetComponent<InventoryItemView>();
+            _popupController = FindFirstObjectByType<InventoryItemPopupController>(FindObjectsInactive.Include);
         }
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (eventData.button != PointerEventData.InputButton.Right)
+            if (_itemView == null || _itemView.Config == null)
             {
                 return;
             }
 
-            if (_itemView == null || _itemView.Config == null)
+            if (eventData.button == PointerEventData.InputButton.Left)
+            {
+                TryOpenInfoPopup();
+                return;
+            }
+
+            if (eventData.button != PointerEventData.InputButton.Right)
             {
                 return;
             }
@@ -82,6 +90,33 @@ namespace TheLastTowerDefence.Inventory.Systems
                     return;
                 }
             }
+        }
+
+        private void TryOpenInfoPopup()
+        {
+            var isInGrid = IsItemInInventoryGrid();
+            var slot = GetComponentInParent<EquipmentSlotCellView>();
+            var isInEquippedSlot = slot != null && slot.EquippedItem == _itemView;
+            if (!isInGrid && !isInEquippedSlot)
+            {
+                return;
+            }
+
+            if (_popupController == null)
+            {
+                _popupController = FindFirstObjectByType<InventoryItemPopupController>(FindObjectsInactive.Include);
+            }
+
+            if (_popupController != null)
+            {
+                _popupController.ShowForItem(_itemView);
+            }
+        }
+
+        private bool IsItemInInventoryGrid()
+        {
+            var grid = FindFirstObjectByType<InventoryGridView>();
+            return grid != null && grid.ItemsLayer != null && transform.parent == grid.ItemsLayer;
         }
     }
 }

@@ -66,6 +66,10 @@ namespace TheLastTowerDefence.Inventory.Domain
         public float bonusMaxHpMin;
         public float bonusMaxHpMax;
 
+        [Tooltip("Диапазон бонуса к восстановлению HP в секунду.")]
+        public float bonusHpRegenPerSecondMin;
+        public float bonusHpRegenPerSecondMax;
+
         [Tooltip("Диапазон бонуса к максимуму маны.")]
         public float bonusMaxManaMin;
         public float bonusMaxManaMax;

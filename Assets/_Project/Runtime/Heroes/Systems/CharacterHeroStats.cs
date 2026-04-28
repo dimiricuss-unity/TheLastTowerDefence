@@ -39,6 +39,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         float _maxMana;
         float _currentMana;
         float _manaRegenPerSecond;
+        float _hpRegenPerSecond;
         int _damageResistanceRating;
         bool _configured;
         CharacterCoreStats _coreStats;
@@ -58,6 +59,7 @@ namespace TheLastTowerDefence.Heroes.Systems
         public float CurrentMana => _currentMana;
         public float MaxMana => _maxMana;
         public float ManaRegenPerSecond => _manaRegenPerSecond;
+        public float HpRegenPerSecond => _hpRegenPerSecond;
         /// <summary>Рейтинг сопротивления урону (выносливость + 0.25×сила, INT вниз); в бою см. <see cref="CharacterStatFormulas.ComputeDamageAfterResistance"/>.</summary>
         public int DamageResistanceRating => _damageResistanceRating;
         public bool IsAlive => _configured && _currentHealth > 0f;
@@ -121,6 +123,7 @@ namespace TheLastTowerDefence.Heroes.Systems
 
         void Update()
         {
+            TickHealthRegen();
             TickManaRegen();
         }
 
@@ -188,6 +191,7 @@ namespace TheLastTowerDefence.Heroes.Systems
                 weaponDelta);
 
             _maxHealth = Mathf.Max(1f, CharacterStatFormulas.ComputeMaxHitPoints(core) + allMods.MaxHpBonus);
+            _hpRegenPerSecond = Mathf.Max(0f, allMods.HpRegenPerSecondBonus);
             _maxMana = Mathf.Max(0f, CharacterStatFormulas.ComputeMaxMana(core) + allMods.MaxManaBonus);
             _manaRegenPerSecond = CharacterStatFormulas.ComputeManaRegenPerSecond(core) + allMods.ManaRegenPerSecondBonus;
             _manaRegenPerSecond = Mathf.Max(0f, _manaRegenPerSecond);
@@ -441,6 +445,19 @@ namespace TheLastTowerDefence.Heroes.Systems
             _currentMana = Mathf.Min(_maxMana, _currentMana + _manaRegenPerSecond * Time.deltaTime);
             if (!Mathf.Approximately(before, _currentMana))
                 ManaChanged?.Invoke(_currentMana, _maxMana);
+        }
+
+        void TickHealthRegen()
+        {
+            if (!_configured || !IsAlive || _hpRegenPerSecond <= 0f)
+                return;
+            if (_currentHealth >= _maxHealth - 1e-6f)
+                return;
+
+            var before = _currentHealth;
+            _currentHealth = Mathf.Min(_maxHealth, _currentHealth + _hpRegenPerSecond * Time.deltaTime);
+            if (!Mathf.Approximately(before, _currentHealth))
+                HealthChanged?.Invoke(_currentHealth, _maxHealth);
         }
 
         public void ApplyDamage(float amount)

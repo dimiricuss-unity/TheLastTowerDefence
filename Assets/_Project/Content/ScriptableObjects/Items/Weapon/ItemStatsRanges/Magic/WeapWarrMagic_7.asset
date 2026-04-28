@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0da345c2f2dc4b9a49ea06d795962, type: 3}
+  m_Name: WeapWarrMagic_7
+  m_EditorClassIdentifier: 
+  slotType: 2
+  equipableCharacter: 0
+  rarity: 2
+  iconColor: {r: 0.69411767, g: 0.7365732, b: 1, a: 1}
+  weaponBaseMinDamageMin: 10
+  weaponBaseMinDamageMax: 12
+  weaponBaseMaxDamageMin: 15
+  weaponBaseMaxDamageMax: 18
+  weaponBaseAttacksPerSecondMin: 0.3
+  weaponBaseAttacksPerSecondMax: 0.4
+  weaponBaseCritModifierMin: 1
+  weaponBaseCritModifierMax: 2
+  weaponArmorRatingMin: 0
+  weaponArmorRatingMax: 0
+  bonusStrengthMin: 1
+  bonusStrengthMax: 4
+  bonusDexterityMin: 0
+  bonusDexterityMax: 0
+  bonusStaminaMin: 1
+  bonusStaminaMax: 5
+  bonusIntelligenceMin: 0
+  bonusIntelligenceMax: 0
+  bonusWillpowerMin: 0
+  bonusWillpowerMax: 0
+  bonusLuckMin: 0
+  bonusLuckMax: 0
+  bonusMaxHpMin: 0
+  bonusMaxHpMax: 0
+  bonusMaxManaMin: 45
+  bonusMaxManaMax: 100
+  bonusManaRegenPerSecondMin: 0
+  bonusManaRegenPerSecondMax: 0
+  bonusCriticalDamageMin: 5
+  bonusCriticalDamageMax: 35
+  priceMin: 2000
+  priceMax: 2500

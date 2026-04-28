@@ -103,6 +103,7 @@ namespace TheLastTowerDefence.Formulas
         public int ArmorRatingBonus;
 
         public float MaxHpBonus;
+        public float HpRegenPerSecondBonus;
         public float MaxManaBonus;
         public float ManaRegenPerSecondBonus;
         public float CriticalDamageBonus;
@@ -122,6 +123,7 @@ namespace TheLastTowerDefence.Formulas
                 LuckBonus = a.LuckBonus + b.LuckBonus,
                 ArmorRatingBonus = a.ArmorRatingBonus + b.ArmorRatingBonus,
                 MaxHpBonus = a.MaxHpBonus + b.MaxHpBonus,
+                HpRegenPerSecondBonus = a.HpRegenPerSecondBonus + b.HpRegenPerSecondBonus,
                 MaxManaBonus = a.MaxManaBonus + b.MaxManaBonus,
                 ManaRegenPerSecondBonus = a.ManaRegenPerSecondBonus + b.ManaRegenPerSecondBonus,
                 CriticalDamageBonus = a.CriticalDamageBonus + b.CriticalDamageBonus,

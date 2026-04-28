@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0da345c2f2dc4b9a49ea06d795962, type: 3}
+  m_Name: WeapWarrRare_5
+  m_EditorClassIdentifier: 
+  slotType: 2
+  equipableCharacter: 0
+  rarity: 1
+  iconColor: {r: 1, g: 0.9054029, b: 0.6933962, a: 1}
+  weaponBaseMinDamageMin: 7
+  weaponBaseMinDamageMax: 9
+  weaponBaseMaxDamageMin: 14
+  weaponBaseMaxDamageMax: 16
+  weaponBaseAttacksPerSecondMin: 0.3
+  weaponBaseAttacksPerSecondMax: 0.4
+  weaponBaseCritModifierMin: 2
+  weaponBaseCritModifierMax: 3
+  weaponArmorRatingMin: 0
+  weaponArmorRatingMax: 0
+  bonusStrengthMin: 1
+  bonusStrengthMax: 2
+  bonusDexterityMin: 0
+  bonusDexterityMax: 0
+  bonusStaminaMin: 0
+  bonusStaminaMax: 0
+  bonusIntelligenceMin: 1
+  bonusIntelligenceMax: 7
+  bonusWillpowerMin: 1
+  bonusWillpowerMax: 3
+  bonusLuckMin: 0
+  bonusLuckMax: 0
+  bonusMaxHpMin: 0
+  bonusMaxHpMax: 0
+  bonusMaxManaMin: 0
+  bonusMaxManaMax: 0
+  bonusManaRegenPerSecondMin: 0
+  bonusManaRegenPerSecondMax: 0
+  bonusCriticalDamageMin: 1
+  bonusCriticalDamageMax: 6
+  priceMin: 420
+  priceMax: 850

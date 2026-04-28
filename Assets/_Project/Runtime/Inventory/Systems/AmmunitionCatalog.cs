@@ -204,6 +204,7 @@ namespace TheLastTowerDefence.Inventory.Systems
             rolled.bonusLuck = RollInt(range.bonusLuckMin, range.bonusLuckMax);
 
             rolled.bonusMaxHp = RollFloat(range.bonusMaxHpMin, range.bonusMaxHpMax);
+            rolled.bonusHpRegenPerSecond = RollFloat(range.bonusHpRegenPerSecondMin, range.bonusHpRegenPerSecondMax);
             rolled.bonusMaxMana = RollFloat(range.bonusMaxManaMin, range.bonusMaxManaMax);
             rolled.bonusManaRegenPerSecond = RollFloat(range.bonusManaRegenPerSecondMin, range.bonusManaRegenPerSecondMax);
             rolled.bonusCriticalDamage = RollFloat(range.bonusCriticalDamageMin, range.bonusCriticalDamageMax);

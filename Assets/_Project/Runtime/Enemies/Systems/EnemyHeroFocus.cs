@@ -52,10 +52,11 @@ namespace TheLastTowerDefence.Enemies.Systems
         {
             if (hero == null || _heroInZone != hero)
                 return;
-
-            _heroInZone.Died -= OnHeroDied;
-            _heroInZone = null;
-            ApplyChaseTarget();
+            
+            // Intentional no-op:
+            // once an enemy has focused a hero, it keeps this target
+            // until that hero dies. Exiting trigger overlap should not
+            // immediately drop aggro and cause focus jitter.
         }
 
         void OnDestroy()
