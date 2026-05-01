@@ -30,7 +30,7 @@ MonoBehaviour:
   bonusStrengthMax: 0
   bonusDexterityMin: 0
   bonusDexterityMax: 0
-  bonusStaminaMin: 2
+  bonusStaminaMin: 1
   bonusStaminaMax: 5
   bonusIntelligenceMin: 0
   bonusIntelligenceMax: 0
@@ -49,4 +49,4 @@ MonoBehaviour:
   bonusCriticalDamageMin: 0
   bonusCriticalDamageMax: 0
   priceMin: 250
-  priceMax: 350
+  priceMax: 750

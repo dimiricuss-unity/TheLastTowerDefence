@@ -27,17 +27,17 @@ MonoBehaviour:
   weaponArmorRatingMin: 10
   weaponArmorRatingMax: 20
   bonusStrengthMin: 1
-  bonusStrengthMax: 10
-  bonusDexterityMin: 1
-  bonusDexterityMax: 10
+  bonusStrengthMax: 7
+  bonusDexterityMin: 0
+  bonusDexterityMax: 0
   bonusStaminaMin: 1
-  bonusStaminaMax: 10
+  bonusStaminaMax: 7
   bonusIntelligenceMin: 0
   bonusIntelligenceMax: 0
   bonusWillpowerMin: 0
   bonusWillpowerMax: 0
-  bonusLuckMin: 1
-  bonusLuckMax: 10
+  bonusLuckMin: 0
+  bonusLuckMax: 0
   bonusMaxHpMin: 10
   bonusMaxHpMax: 20
   bonusHpRegenPerSecondMin: 1
@@ -48,5 +48,5 @@ MonoBehaviour:
   bonusManaRegenPerSecondMax: 0
   bonusCriticalDamageMin: 0
   bonusCriticalDamageMax: 0
-  priceMin: 1500
-  priceMax: 2500
+  priceMin: 700
+  priceMax: 1500

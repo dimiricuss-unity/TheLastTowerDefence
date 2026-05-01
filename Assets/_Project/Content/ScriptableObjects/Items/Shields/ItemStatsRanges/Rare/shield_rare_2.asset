@@ -26,12 +26,12 @@ MonoBehaviour:
   weaponBaseCritModifierMax: 0
   weaponArmorRatingMin: 5
   weaponArmorRatingMax: 10
-  bonusStrengthMin: 2
+  bonusStrengthMin: 1
   bonusStrengthMax: 5
   bonusDexterityMin: 0
   bonusDexterityMax: 0
-  bonusStaminaMin: 7
-  bonusStaminaMax: 10
+  bonusStaminaMin: 0
+  bonusStaminaMax: 0
   bonusIntelligenceMin: 0
   bonusIntelligenceMax: 0
   bonusWillpowerMin: 0

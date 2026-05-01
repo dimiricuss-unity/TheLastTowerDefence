@@ -26,20 +26,22 @@ MonoBehaviour:
   weaponBaseCritModifierMax: 3
   weaponArmorRatingMin: 0
   weaponArmorRatingMax: 0
-  bonusStrengthMin: 5
-  bonusStrengthMax: 8
+  bonusStrengthMin: 0
+  bonusStrengthMax: 0
   bonusDexterityMin: 0
   bonusDexterityMax: 0
-  bonusStaminaMin: 5
-  bonusStaminaMax: 10
+  bonusStaminaMin: 1
+  bonusStaminaMax: 7
   bonusIntelligenceMin: 0
   bonusIntelligenceMax: 0
   bonusWillpowerMin: 0
   bonusWillpowerMax: 0
-  bonusLuckMin: 2
-  bonusLuckMax: 3
+  bonusLuckMin: 0
+  bonusLuckMax: 0
   bonusMaxHpMin: 5
   bonusMaxHpMax: 25
+  bonusHpRegenPerSecondMin: 0
+  bonusHpRegenPerSecondMax: 0
   bonusMaxManaMin: 0
   bonusMaxManaMax: 0
   bonusManaRegenPerSecondMin: 0

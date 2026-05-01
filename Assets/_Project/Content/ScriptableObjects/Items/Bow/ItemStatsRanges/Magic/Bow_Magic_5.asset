@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0da345c2f2dc4b9a49ea06d795962, type: 3}
+  m_Name: Bow_Magic_5
+  m_EditorClassIdentifier: 
+  slotType: 2
+  equipableCharacter: 2
+  rarity: 2
+  iconColor: {r: 0.69411767, g: 0.7372549, b: 1, a: 1}
+  weaponBaseMinDamageMin: 10
+  weaponBaseMinDamageMax: 20
+  weaponBaseMaxDamageMin: 21
+  weaponBaseMaxDamageMax: 35
+  weaponBaseAttacksPerSecondMin: 0.3
+  weaponBaseAttacksPerSecondMax: 0.6
+  weaponBaseCritModifierMin: 2
+  weaponBaseCritModifierMax: 5
+  weaponArmorRatingMin: 0
+  weaponArmorRatingMax: 0
+  bonusStrengthMin: 0
+  bonusStrengthMax: 0
+  bonusDexterityMin: 3
+  bonusDexterityMax: 10
+  bonusStaminaMin: 0
+  bonusStaminaMax: 0
+  bonusIntelligenceMin: 0
+  bonusIntelligenceMax: 0
+  bonusWillpowerMin: 0
+  bonusWillpowerMax: 0
+  bonusLuckMin: 2
+  bonusLuckMax: 7
+  bonusMaxHpMin: 5
+  bonusMaxHpMax: 15
+  bonusHpRegenPerSecondMin: 0
+  bonusHpRegenPerSecondMax: 0
+  bonusMaxManaMin: 0
+  bonusMaxManaMax: 0
+  bonusManaRegenPerSecondMin: 0
+  bonusManaRegenPerSecondMax: 0
+  bonusCriticalDamageMin: 3
+  bonusCriticalDamageMax: 7
+  priceMin: 1500
+  priceMax: 2500
