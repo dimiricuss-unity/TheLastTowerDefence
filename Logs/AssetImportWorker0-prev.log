@@ -15,7 +15,7 @@ D:/Unity projects/TheLastTowerDefence
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-53919
+50084
 Successfully changed project path to: D:/Unity projects/TheLastTowerDefence
 D:/Unity projects/TheLastTowerDefence
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -49,12 +49,12 @@ D:/Unity projects/TheLastTowerDefence
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [9208] Host "[IP] 192.168.0.101 [Port] 0 [Flags] 2 [Guid] 1659781773 [EditorId] 1659781773 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-136F88O) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+Player connection [9420] Host "[IP] 192.168.0.101 [Port] 0 [Flags] 2 [Guid] 1945255975 [EditorId] 1945255975 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-136F88O) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
 
-Player connection [9208] Host "[IP] 192.168.0.101 [Port] 0 [Flags] 2 [Guid] 1659781773 [EditorId] 1659781773 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-136F88O) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [9420] Host "[IP] 192.168.0.101 [Port] 0 [Flags] 2 [Guid] 1945255975 [EditorId] 1945255975 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-136F88O) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
 
 [Physics::Module] Initialized MultithreadedJobDispatcher with 3 workers.
-Refreshing native plugins compatible for Editor in 22.46 ms, found 3 plugins.
+Refreshing native plugins compatible for Editor in 83.48 ms, found 3 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2022.3.22f1 (887be4894c44)
 [Subsystems] Discovering subsystems at path D:/Unity/2022.3.22f1/Editor/Data/Resources/UnitySubsystems
@@ -70,7 +70,7 @@ Initialize mono
 Mono path[0] = 'D:/Unity/2022.3.22f1/Editor/Data/Managed'
 Mono path[1] = 'D:/Unity/2022.3.22f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'D:/Unity/2022.3.22f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56340
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56212
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: D:/Unity/2022.3.22f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
@@ -81,8 +81,8 @@ Register platform support module: D:/Unity/2022.3.22f1/Editor/Data/PlaybackEngin
 Register platform support module: D:/Unity/2022.3.22f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
 Register platform support module: D:/Unity/2022.3.22f1/Editor/Data/PlaybackEngines/LinuxStandaloneSupport/UnityEditor.LinuxStandalone.Extensions.dll
 Register platform support module: D:/Unity/2022.3.22f1/Editor/Data/PlaybackEngines/MetroSupport/UnityEditor.UWP.Extensions.dll
-Registered in 0.019459 seconds.
-- Loaded All Assemblies, in  1.675 seconds
+Registered in 0.136923 seconds.
+- Loaded All Assemblies, in  2.145 seconds
 Native extension for UWP target not found
 Native extension for LinuxStandalone target not found
 Native extension for WindowsStandalone target not found
@@ -95,50 +95,50 @@ Native extension for AppleTV target not found
 [usbmuxd] Send listen message
 Native extension for iOS target not found
 Native extension for Android target not found
-Android Extension - Scanning For ADB Devices 564 ms
+Android Extension - Scanning For ADB Devices 1155 ms
 Native extension for OSXStandalone target not found
 Native extension for WebGL target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  2.584 seconds
-Domain Reload Profiling: 4258ms
-	BeginReloadAssembly (393ms)
+- Finished resetting the current domain, in  4.382 seconds
+Domain Reload Profiling: 6532ms
+	BeginReloadAssembly (696ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (3ms)
-	RebuildCommonClasses (109ms)
-	RebuildNativeTypeToScriptingClass (29ms)
-	initialDomainReloadingComplete (203ms)
-	LoadAllAssembliesAndSetupDomain (940ms)
-		LoadAssemblies (392ms)
+		CreateAndSetChildDomain (1ms)
+	RebuildCommonClasses (201ms)
+	RebuildNativeTypeToScriptingClass (51ms)
+	initialDomainReloadingComplete (462ms)
+	LoadAllAssembliesAndSetupDomain (733ms)
+		LoadAssemblies (700ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (932ms)
-			TypeCache.Refresh (928ms)
-				TypeCache.ScanAssembly (880ms)
+		AnalyzeDomain (719ms)
+			TypeCache.Refresh (712ms)
+				TypeCache.ScanAssembly (629ms)
 			ScanForSourceGeneratedMonoScriptInfo (1ms)
-			ResolveRequiredComponents (1ms)
-	FinalizeReload (2585ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (4389ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (2346ms)
+		SetupLoadedEditorAssemblies (3670ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (1026ms)
-			SetLoadedEditorAssemblies (15ms)
+			InitializePlatformSupportModulesInManaged (2005ms)
+			SetLoadedEditorAssemblies (26ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (12ms)
-			ProcessInitializeOnLoadAttributes (1015ms)
-			ProcessInitializeOnLoadMethodAttributes (277ms)
+			BeforeProcessingInitializeOnLoad (16ms)
+			ProcessInitializeOnLoadAttributes (1146ms)
+			ProcessInitializeOnLoadMethodAttributes (468ms)
 			AfterProcessingInitializeOnLoad (0ms)
-			EditorAssembliesLoaded (0ms)
+			EditorAssembliesLoaded (9ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (0ms)
 ========================================================================
 Worker process is ready to serve import requests
 Begin MonoManager ReloadAssembly
 Symbol file LoadedFromMemory is not a mono symbol file
-- Loaded All Assemblies, in  3.542 seconds
-Refreshing native plugins compatible for Editor in 10.23 ms, found 3 plugins.
+- Loaded All Assemblies, in  6.857 seconds
+Refreshing native plugins compatible for Editor in 11.20 ms, found 3 plugins.
 Native extension for UWP target not found
 Native extension for LinuxStandalone target not found
 Native extension for WindowsStandalone target not found
@@ -175,47 +175,47 @@ UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes(Type[])
 (Filename: ./Library/PackageCache/com.unity.addressables@1.21.21/Editor/HostingServices/HostingServicesManager.cs Line: 586)
 
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in 14.911 seconds
-Domain Reload Profiling: 18451ms
-	BeginReloadAssembly (548ms)
+- Finished resetting the current domain, in 19.682 seconds
+Domain Reload Profiling: 26522ms
+	BeginReloadAssembly (1286ms)
 		ExecutionOrderSort (0ms)
-		DisableScriptedObjects (23ms)
+		DisableScriptedObjects (38ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (83ms)
-	RebuildCommonClasses (155ms)
-	RebuildNativeTypeToScriptingClass (40ms)
-	initialDomainReloadingComplete (144ms)
-	LoadAllAssembliesAndSetupDomain (2651ms)
-		LoadAssemblies (1686ms)
+		CreateAndSetChildDomain (132ms)
+	RebuildCommonClasses (239ms)
+	RebuildNativeTypeToScriptingClass (68ms)
+	initialDomainReloadingComplete (347ms)
+	LoadAllAssembliesAndSetupDomain (4899ms)
+		LoadAssemblies (3198ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (1267ms)
-			TypeCache.Refresh (1082ms)
-				TypeCache.ScanAssembly (994ms)
-			ScanForSourceGeneratedMonoScriptInfo (159ms)
-			ResolveRequiredComponents (23ms)
-	FinalizeReload (14913ms)
+		AnalyzeDomain (2413ms)
+			TypeCache.Refresh (1816ms)
+				TypeCache.ScanAssembly (1667ms)
+			ScanForSourceGeneratedMonoScriptInfo (269ms)
+			ResolveRequiredComponents (326ms)
+	FinalizeReload (19683ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (13720ms)
+		SetupLoadedEditorAssemblies (18142ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (759ms)
-			SetLoadedEditorAssemblies (27ms)
+			InitializePlatformSupportModulesInManaged (669ms)
+			SetLoadedEditorAssemblies (25ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (461ms)
-			ProcessInitializeOnLoadAttributes (12182ms)
-			ProcessInitializeOnLoadMethodAttributes (278ms)
-			AfterProcessingInitializeOnLoad (12ms)
+			BeforeProcessingInitializeOnLoad (653ms)
+			ProcessInitializeOnLoadAttributes (16193ms)
+			ProcessInitializeOnLoadMethodAttributes (589ms)
+			AfterProcessingInitializeOnLoad (13ms)
 			EditorAssembliesLoaded (1ms)
 		ExecutionOrderSort2 (0ms)
-		AwakeInstancesAfterBackupRestoration (18ms)
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.46 seconds
-Refreshing native plugins compatible for Editor in 8.58 ms, found 3 plugins.
+		AwakeInstancesAfterBackupRestoration (61ms)
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.11 seconds
+Refreshing native plugins compatible for Editor in 26.65 ms, found 3 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 4330 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 90 unused Assets / (257.4 KB). Loaded Objects now: 4797.
-Memory consumption went from 160.6 MB to 160.4 MB.
-Total: 42.957436 ms (FindLiveObjects: 1.285921 ms CreateObjectMapping: 0.843308 ms MarkObjects: 39.574529 ms  DeleteObjects: 1.250746 ms)
+Unloading 90 unused Assets / (257.0 KB). Loaded Objects now: 4797.
+Memory consumption went from 160.4 MB to 160.1 MB.
+Total: 36.417283 ms (FindLiveObjects: 0.734560 ms CreateObjectMapping: 0.741302 ms MarkObjects: 34.180481 ms  DeleteObjects: 0.757716 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
@@ -233,25 +233,591 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  Time since last request: 30997.799692 seconds.
-  path: Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_1.asset
-  artifactKey: Guid(069ec494a64236b4dacd54757cb80ea0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_1.asset using Guid(069ec494a64236b4dacd54757cb80ea0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c7b47c2f045174b194bea159d7f094cc') in 0.067439 seconds
+  Time since last request: 356.954395 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemConfigs/Belt_5.asset
+  artifactKey: Guid(87bd47b9a921d2d4fbadc0578ad657eb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemConfigs/Belt_5.asset using Guid(87bd47b9a921d2d4fbadc0578ad657eb) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2065f378265e8008b546fbfdc807ee06') in 0.147488 seconds
 Number of updated asset objects reloaded before import = 0
 Number of asset objects unloaded after import = 2
 ========================================================================
 Received Import Request.
-  Time since last request: 0.000068 seconds.
-  path: Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_2.asset
-  artifactKey: Guid(5d4d08a06597a2d45885be4f3f232683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_2.asset using Guid(5d4d08a06597a2d45885be4f3f232683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7ccf3dfa4c91cc980a317210912eb751') in 0.003148 seconds
+  Time since last request: 45.732940 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_base_5.asset
+  artifactKey: Guid(b41c93a6d0524f645ac2339125e1c969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_base_5.asset using Guid(b41c93a6d0524f645ac2339125e1c969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b922a837b923fc31e381193f223e1fbc') in 0.002403 seconds
 Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 2
+Number of asset objects unloaded after import = 1
 ========================================================================
 Received Import Request.
-  Time since last request: 146.762348 seconds.
-  path: Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_2.asset
-  artifactKey: Guid(5d4d08a06597a2d45885be4f3f232683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/_Project/Content/ScriptableObjects/Items/Bow/ItemConfigs/bow_2.asset using Guid(5d4d08a06597a2d45885be4f3f232683) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a1547fdc1c0517626507e47dbcd4b230') in 0.002702 seconds
+  Time since last request: 116.563498 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_1.asset
+  artifactKey: Guid(b41c93a6d0524f645ac2339125e1c969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_1.asset using Guid(b41c93a6d0524f645ac2339125e1c969) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5c8d62a66eb964d01059ccdf03eef488') in 0.002505 seconds
 Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 2
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 1.478395 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_1 1.asset
+  artifactKey: Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_1 1.asset using Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2eae2d3aaabef914c21413659f2cc496') in 0.003793 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.429557 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2.asset
+  artifactKey: Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2.asset using Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6b8458c3c4709b0ee057bc794c55e88a') in 0.001835 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 14.328162 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2.asset
+  artifactKey: Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2.asset using Guid(ab84e7d4ea6ac6847883b98a467bb4be) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b4cef33c1ef4beb5488f43a2794c6ff7') in 0.037035 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.000037 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2 1.asset
+  artifactKey: Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_2 1.asset using Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '01b563f6e90d405b00f91933c0ed81d6') in 0.004761 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.432743 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3.asset
+  artifactKey: Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3.asset using Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '24fbaeaf3d76772e893f3527523b9d2a') in 0.001609 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 11.550946 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3 1.asset
+  artifactKey: Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3 1.asset using Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fab198d410c87c8708242e33a6fbfd91') in 0.005559 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.129505 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3.asset
+  artifactKey: Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_3.asset using Guid(196a76f25405e5a48b046a2bdbf9480a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '860722eb2ce688a7f18508cb930afc52') in 0.003271 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.251536 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4.asset
+  artifactKey: Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4.asset using Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd6efc0c74a34515fd4a8c34396c05f4c') in 0.003394 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 9.731708 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4 1.asset
+  artifactKey: Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4 1.asset using Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '719aa50c83f37f916cc5d6172be883d8') in 0.001610 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.121798 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4.asset
+  artifactKey: Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_4.asset using Guid(47fd3cbeceee50d4ca2d24d84ed5bcd6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '21af4e6c8e1f7f7bd4ed770bbb9476ad') in 0.002596 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.785529 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5.asset
+  artifactKey: Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5.asset using Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '40da0b4e1958c15719ed75b5c2c4b2e4') in 0.001903 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 8.690916 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5 1.asset
+  artifactKey: Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5 1.asset using Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c48e0b5538d9bac7e801eca1f211e60b') in 0.001747 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.122326 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5.asset
+  artifactKey: Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_5.asset using Guid(94b11c5c4cbb35046a6a659660444227) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c937519953579058c11f99e86621f2e7') in 0.004005 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.639182 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_6.asset
+  artifactKey: Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_6.asset using Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '57435e35662927cac5e5d10004dfd646') in 0.002017 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 6.914480 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_6.asset
+  artifactKey: Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Rare/Belt_Rare_6.asset using Guid(43cc34b4dbe89f349b907cf5266925b3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bd02cd2611ffc04fd5c34136b7d22a3b') in 0.064917 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 7.626041 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Rare_1.asset
+  artifactKey: Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Rare_1.asset using Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8bf1ad9e6c1046682c481c5ba22adc5c') in 0.001967 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 334.671653 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1.asset
+  artifactKey: Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1.asset using Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '93cb5a355dd513111d68a3e8114dc0b4') in 0.002165 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 49.214914 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1.asset
+  artifactKey: Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1.asset using Guid(c6b44485063e9c54284845839d8f06e3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '64a179d013d4a0034e5849b6ce2d5b04') in 0.001938 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.000045 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1 1.asset
+  artifactKey: Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_1 1.asset using Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3cd6a8d17eb6265f25335a8772862668') in 0.002063 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.192756 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2.asset
+  artifactKey: Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2.asset using Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '766b1fd8ddc8bf221d28d20027e7583e') in 0.003402 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 21.050234 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2 1.asset
+  artifactKey: Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2 1.asset using Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f1ee99d7584a27875dff36b9940423ad') in 0.001801 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.120791 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2.asset
+  artifactKey: Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_2.asset using Guid(6c1db00f2c18a604abc62097cfce3f21) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0196f84c61728253a929ee440ece8ea9') in 0.002951 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.335101 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3.asset
+  artifactKey: Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3.asset using Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5661b9af4a28d177a2f74574443154aa') in 0.004035 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 32.368161 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3.asset
+  artifactKey: Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3.asset using Guid(c056491652b28ab428435136cb1e0bbc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ad75505b0d790ef52e22fdc69debb471') in 0.001948 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.000042 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3 1.asset
+  artifactKey: Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3 1.asset using Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0211f096eb09b5253654be5c1b871c25') in 0.001930 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.315209 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4.asset
+  artifactKey: Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4.asset using Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ee904d490897712c5a4c832db490e316') in 0.004528 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 26.792496 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4.asset
+  artifactKey: Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4.asset using Guid(90ce6a2337cdd4b47aa9512339a9f9fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '947babe53cb3a4ef21fd3f51771e441a') in 0.002021 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.172693 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4 1.asset
+  artifactKey: Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_4 1.asset using Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4ce081f63b898187208dc34da19ae7e8') in 0.011576 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 4.639178 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5.asset
+  artifactKey: Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5.asset using Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ac0eae6cac60aa073c3790cc71c0c783') in 0.001636 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 16.428361 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3 1.asset
+  artifactKey: Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_3 1.asset using Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd98f42e873103f95e5bf04f1f1b9d7a8') in 0.001591 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.127672 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5.asset
+  artifactKey: Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5.asset using Guid(d9e1349f640f1664da7bc6607144bc6d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c5f1e3fd586439f258be97fcad54e10d') in 0.003218 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 3.603459 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_6.asset
+  artifactKey: Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_6.asset using Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '394b5f2d1fe45a5a78fc4f2fcf09cd13') in 0.010765 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 18.847213 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5 1.asset
+  artifactKey: Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_5 1.asset using Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '85f1d976072e6a5e5c300c9b9e4c8fe9') in 0.003296 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.129109 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_6.asset
+  artifactKey: Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_6.asset using Guid(f7e0206eca3823e438c284586b769fdd) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'acc5fdd9f0ad3d6f2a62bfe6b194af9e') in 0.004129 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 6.047046 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7.asset
+  artifactKey: Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7.asset using Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'fdce52e56a1de1a5df160f4a085b2e48') in 0.011387 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 279.866634 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7 1.asset
+  artifactKey: Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7 1.asset using Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '448532d34d257deb8c9a614ff0632e65') in 0.002190 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 0.133692 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7.asset
+  artifactKey: Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_7.asset using Guid(f1e665b900bf23e4bbce81b25ca40a3d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '068db9760a44cc955a7f8de41180076c') in 0.001822 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 4.947203 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_8.asset
+  artifactKey: Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_8.asset using Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c2c915dd74d86c85aa50579c8cc8e5d2') in 0.001543 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Import Request.
+  Time since last request: 187.379914 seconds.
+  path: Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_8.asset
+  artifactKey: Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Content/ScriptableObjects/Items/Belt/ItemStatsRanges/Magic/Belt_Magic_8.asset using Guid(171327d834d20f747ad54a6c29a6edf3) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '3dbe1b46991087ac675ace05b293984b') in 0.002448 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1
+========================================================================
+Received Prepare
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  1.267 seconds
+Refreshing native plugins compatible for Editor in 9.75 ms, found 3 plugins.
+Native extension for UWP target not found
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for AppleTV target not found
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  7.736 seconds
+Domain Reload Profiling: 9002ms
+	BeginReloadAssembly (422ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (41ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (127ms)
+	RebuildCommonClasses (73ms)
+	RebuildNativeTypeToScriptingClass (25ms)
+	initialDomainReloadingComplete (61ms)
+	LoadAllAssembliesAndSetupDomain (682ms)
+		LoadAssemblies (830ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (30ms)
+			TypeCache.Refresh (14ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (13ms)
+	FinalizeReload (7738ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (6136ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (195ms)
+			SetLoadedEditorAssemblies (13ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (285ms)
+			ProcessInitializeOnLoadAttributes (5420ms)
+			ProcessInitializeOnLoadMethodAttributes (214ms)
+			AfterProcessingInitializeOnLoad (9ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (57ms)
+Refreshing native plugins compatible for Editor in 14.48 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 4295 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 45 unused Assets / (228.2 KB). Loaded Objects now: 4816.
+Memory consumption went from 155.8 MB to 155.6 MB.
+Total: 11.437852 ms (FindLiveObjects: 0.499184 ms CreateObjectMapping: 0.324484 ms MarkObjects: 10.129949 ms  DeleteObjects: 0.481890 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-codec-MediaFoundation-h265: 55f8c8538cf0483ab7069ead6b737db2 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 834.923396 seconds.
+  path: Assets/_Project/Runtime/Heroes/Domain/Characters/Archer.asset
+  artifactKey: Guid(078705e50c4f25345957e5eb1266acc0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Runtime/Heroes/Domain/Characters/Archer.asset using Guid(078705e50c4f25345957e5eb1266acc0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5855786eb6579ed37150fce4f98fc266') in 0.118641 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000050 seconds.
+  path: Assets/_Project/Runtime/Heroes/Domain/Characters/Warrior.asset
+  artifactKey: Guid(85b53337576ec7a4c87f52299b7d9648) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Runtime/Heroes/Domain/Characters/Warrior.asset using Guid(85b53337576ec7a4c87f52299b7d9648) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '58fcd947c17f97c69cede3cdc668015b') in 0.010622 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Import Request.
+  Time since last request: 0.000297 seconds.
+  path: Assets/_Project/Runtime/Heroes/Domain/Characters/Cleric.asset
+  artifactKey: Guid(7d9a6b25c8ebfe54fbb159bd0b2475dc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Runtime/Heroes/Domain/Characters/Cleric.asset using Guid(7d9a6b25c8ebfe54fbb159bd0b2475dc) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '076f24e4a4b1877058f98a8951bd3b03') in 0.009428 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 3
+========================================================================
+Received Prepare
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  2.584 seconds
+Refreshing native plugins compatible for Editor in 28.94 ms, found 3 plugins.
+Native extension for UWP target not found
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for AppleTV target not found
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in 16.963 seconds
+Domain Reload Profiling: 19542ms
+	BeginReloadAssembly (727ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (47ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (196ms)
+	RebuildCommonClasses (127ms)
+	RebuildNativeTypeToScriptingClass (49ms)
+	initialDomainReloadingComplete (108ms)
+	LoadAllAssembliesAndSetupDomain (1564ms)
+		LoadAssemblies (1836ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (117ms)
+			TypeCache.Refresh (39ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (0ms)
+			ResolveRequiredComponents (76ms)
+	FinalizeReload (16966ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (11844ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (328ms)
+			SetLoadedEditorAssemblies (31ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (464ms)
+			ProcessInitializeOnLoadAttributes (10567ms)
+			ProcessInitializeOnLoadMethodAttributes (429ms)
+			AfterProcessingInitializeOnLoad (25ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (187ms)
+Refreshing native plugins compatible for Editor in 26.70 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 4295 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 45 unused Assets / (228.3 KB). Loaded Objects now: 4833.
+Memory consumption went from 157.8 MB to 157.5 MB.
+Total: 40.155448 ms (FindLiveObjects: 1.608352 ms CreateObjectMapping: 0.515013 ms MarkObjects: 37.546090 ms  DeleteObjects: 0.483649 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-codec-MediaFoundation-h265: 55f8c8538cf0483ab7069ead6b737db2 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Prepare
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Loaded All Assemblies, in  3.383 seconds
+Refreshing native plugins compatible for Editor in 17.04 ms, found 3 plugins.
+Native extension for UWP target not found
+Native extension for LinuxStandalone target not found
+Native extension for WindowsStandalone target not found
+Native extension for AppleTV target not found
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Native extension for WebGL target not found
+[Package Manager] Server::EnsureServerProcessIsRunning -- launch failed, reason: Unity was launched with the -noUpm command-line argument
+[Package Manager] UpmClient::Send -- Unable to send message (not connected to UPM process).
+[Package Manager] Cannot connect to Unity Package Manager local server
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in 20.146 seconds
+Domain Reload Profiling: 23501ms
+	BeginReloadAssembly (1052ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (67ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (218ms)
+	RebuildCommonClasses (156ms)
+	RebuildNativeTypeToScriptingClass (72ms)
+	initialDomainReloadingComplete (157ms)
+	LoadAllAssembliesAndSetupDomain (1916ms)
+		LoadAssemblies (2477ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (81ms)
+			TypeCache.Refresh (29ms)
+				TypeCache.ScanAssembly (0ms)
+			ScanForSourceGeneratedMonoScriptInfo (1ms)
+			ResolveRequiredComponents (49ms)
+	FinalizeReload (20148ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (15179ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (332ms)
+			SetLoadedEditorAssemblies (37ms)
+			RefreshPlugins (0ms)
+			BeforeProcessingInitializeOnLoad (1292ms)
+			ProcessInitializeOnLoadAttributes (13006ms)
+			ProcessInitializeOnLoadMethodAttributes (479ms)
+			AfterProcessingInitializeOnLoad (31ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (133ms)
+Refreshing native plugins compatible for Editor in 13.55 ms, found 3 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 4296 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 45 unused Assets / (228.2 KB). Loaded Objects now: 4850.
+Memory consumption went from 160.0 MB to 159.8 MB.
+Total: 21.942409 ms (FindLiveObjects: 0.597086 ms CreateObjectMapping: 0.359073 ms MarkObjects: 20.520482 ms  DeleteObjects: 0.416524 ms)
+
+Prepare: number of updated asset objects reloaded= 0
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-codec-MediaFoundation-h265: 55f8c8538cf0483ab7069ead6b737db2 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:CustomObjectIndexerAttribute: 9a22284fe3817be447336de3de66b15e -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:SearchIndexIgnoredProperties: e643bd26f0fe6173181afceb89e7c659 -> 
+  custom:AudioImporter_EditorPlatform: d09bf68614088b80899f8185d706f6e7 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 1237.137376 seconds.
+  path: Assets/_Project/Runtime/Heroes/Domain/Spell/ClericHealSpell.asset
+  artifactKey: Guid(8305fa176cec76541b09de6f13f75201) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/_Project/Runtime/Heroes/Domain/Spell/ClericHealSpell.asset using Guid(8305fa176cec76541b09de6f13f75201) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '67e49d59aefd6710602e7bcf01e41c02') in 0.104209 seconds
+Number of updated asset objects reloaded before import = 0
+Number of asset objects unloaded after import = 1

@@ -17,9 +17,9 @@ MonoBehaviour:
   attackSpeedScaling: 0
   physicalDamagePrimary: 0
   level: 0
-  strength: 7
-  dexterity: 9
-  stamina: 9
+  strength: 8
+  dexterity: 5
+  stamina: 7
   intelligence: 5
   willpower: 5
   luck: 5

@@ -18,8 +18,8 @@ MonoBehaviour:
   physicalDamagePrimary: 2
   level: 0
   strength: 5
-  dexterity: 10
+  dexterity: 8
   stamina: 5
   intelligence: 5
   willpower: 5
-  luck: 10
+  luck: 7

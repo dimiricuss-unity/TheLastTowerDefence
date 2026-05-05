@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: ClericHealSpell
   m_EditorClassIdentifier: 
   healAmount: 10
-  manaCost: 15
+  manaCost: 35

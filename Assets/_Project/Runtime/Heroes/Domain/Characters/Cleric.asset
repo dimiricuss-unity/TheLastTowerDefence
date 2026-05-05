@@ -20,6 +20,6 @@ MonoBehaviour:
   strength: 5
   dexterity: 5
   stamina: 5
-  intelligence: 9
-  willpower: 9
-  luck: 7
+  intelligence: 8
+  willpower: 7
+  luck: 5
