@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0da345c2f2dc4b9a49ea06d795962, type: 3}
+  m_Name: Body_Base_5
+  m_EditorClassIdentifier: 
+  slotType: 1
+  equipableCharacter: 2
+  rarity: 0
+  iconColor: {r: 1, g: 1, b: 1, a: 1}
+  weaponBaseMinDamageMin: 0
+  weaponBaseMinDamageMax: 0
+  weaponBaseMaxDamageMin: 0
+  weaponBaseMaxDamageMax: 0
+  weaponBaseAttacksPerSecondMin: 0
+  weaponBaseAttacksPerSecondMax: 0
+  weaponBaseCritModifierMin: 0
+  weaponBaseCritModifierMax: 0
+  weaponArmorRatingMin: 2
+  weaponArmorRatingMax: 4
+  bonusStrengthMin: 0
+  bonusStrengthMax: 0
+  bonusDexterityMin: 0
+  bonusDexterityMax: 0
+  bonusStaminaMin: 0
+  bonusStaminaMax: 0
+  bonusIntelligenceMin: 0
+  bonusIntelligenceMax: 0
+  bonusWillpowerMin: 0
+  bonusWillpowerMax: 0
+  bonusLuckMin: 0
+  bonusLuckMax: 0
+  bonusMaxHpMin: 0
+  bonusMaxHpMax: 0
+  bonusHpRegenPerSecondMin: 0
+  bonusHpRegenPerSecondMax: 0
+  bonusMaxManaMin: 0
+  bonusMaxManaMax: 0
+  bonusManaRegenPerSecondMin: 0
+  bonusManaRegenPerSecondMax: 0
+  bonusCriticalDamageMin: 2
+  bonusCriticalDamageMax: 4
+  priceMin: 350
+  priceMax: 650
