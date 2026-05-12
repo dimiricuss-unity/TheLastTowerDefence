@@ -13,6 +13,16 @@
 
 ## Журнал
 
+### 2026-05-12
+
+- **Разделение SO врага:** `EnemyStatsConfig` (`Assets/_Project/Runtime/Enemies/Domain/EnemyStatsConfig.cs`) — только бой + `level`, `totalLootDropChancePercent` и **`experience`** (XP за килл сохранён). Новый **`LootDropConfig`** (`LootDropConfig.cs`) — `level` + `lootDropSections`; типы **`LootRarity`** / **`LootDropSection`** перенесены сюда (drawer `EnemyLootDropSectionDrawer` без изменений по типу).
+- **`EnemyStatsBootstrap`:** вместо одного `config` — поля **`enemyStatsConfig`** и **`lootDropConfig`**; **`EnemyLootDropper.Configure(enemyStats, loot)`** — глобальный шанс из stats, секции из loot (loot `null` — без взвешенного дропа). Ассеты: **`EnemyTest`** + **`EnemyTestLoot`** (`Assets/_Project/Content/ScriptableObjects/Enemies/EnemyTestLoot.asset`), **`DefaultGrunt`** обновлён; префаб **`Assets/_Project/Prefabs/Enemies/Enemy.prefab`** — ссылки на оба SO, на **`lootDropper`** назначен компонент на корне.
+- **Волны — конфиг:** **`EnemiesWaveConfig`** (`EnemiesWaveConfig.cs`) — `GroupInterval`, список **`EnemiesGroup`** (`NumberOfEnemies`, `SpawnInterval`), списки **`EnemyPrefabs`** / **`EnemyConfigs`** / **`EnemyDrops`**. Пример **`Assets/_Project/Content/ScriptableObjects/Waves/Wave_1.asset`** переведён на группы.
+- **Волны — рантайм:** **`EnemyWaves`** (`Assets/_Project/Runtime/Enemies/Systems/EnemyWaves.cs`) на объекте каталога — **`enemyWavesList`**, **`spawnPoints`**; по кнопке следующая волна из списка, после последней снова последняя; корутина по **`EnemiesGroups`** (без паузы перед первой группой, **`GroupInterval`** между группами, **`SpawnInterval`** между врагами внутри группы); точка спавна — случайная среди активных **`EnemySpawnPoint`** под `spawnPoints`; пока волна идёт, повторный старт игнорируется.
+- **Сборка врага из волны:** случайный префаб из **`EnemyPrefabs`**, случайный **`EnemyStatsConfig`** из **`EnemyConfigs`**; **`LootDropConfig`** — случайный из **`EnemyDrops`** с **`level == EnemyStatsConfig.level`**, иначе лут не назначается. **`EnemyWaveSpawnContext`** (`Enemies/Spawning/EnemyWaveSpawnContext.cs`) — pending до `Awake` у **`EnemyStatsBootstrap`** (инжект пар SO перед инициализацией).
+- **`EnemySpawnPoint`:** метод **`SpawnWaveEnemy(prefab, stats, loot)`** — pending + `Instantiate` + **`ApplyInitialChaseTarget`** (`initialChaseTarget` → `EnemyMovement.SetInitialApproachTarget`, как раньше). Legacy **`Spawn()`** только при назначенном **`enemyPrefab`**; **`Start`** не спавнит без префаба.
+- **UI:** **`SpawnEnemiesButton`** (`Assets/_Project/Runtime/UI/SpawnEnemiesButton.cs`) — вызывает **`EnemyWaves.StartNextWave()`**; опциональная ссылка на волны, иначе **`FindFirstObjectByType<EnemyWaves>`**.
+
 ### 2026-04-29
 
 - **Поп-ап предмета (`Canvas/UI/PopUp`):** в `InventoryItemPopupController` (`Assets/_Project/Runtime/Inventory/Systems/InventoryItemPopupController.cs`) перед списком статов выводятся **`displayName`** (fallback на `config.name`, если пусто) и **`description`** из `InventoryItemConfig`; пустая строка-разделитель перед параметрами; текст строится и при отсутствии `statsConfig` (остаётся только заголовок). В блоке статов предмета добавлена строка **«Восст. HP/сек»** для `bonusHpRegenPerSecond` (формат `0.0`, нули не показываются).

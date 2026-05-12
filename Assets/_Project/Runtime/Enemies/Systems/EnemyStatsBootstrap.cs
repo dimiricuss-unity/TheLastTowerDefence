@@ -1,5 +1,6 @@
 using UnityEngine;
 using TheLastTowerDefence.Enemies.Domain;
+using TheLastTowerDefence.Enemies.Spawning;
 
 namespace TheLastTowerDefence.Enemies.Systems
 {
@@ -10,7 +11,9 @@ namespace TheLastTowerDefence.Enemies.Systems
     [DisallowMultipleComponent]
     public sealed class EnemyStatsBootstrap : MonoBehaviour
     {
-        [SerializeField] EnemyStatsConfig config;
+        [SerializeField] EnemyStatsConfig enemyStatsConfig;
+        [SerializeField] LootDropConfig lootDropConfig;
+
         [Tooltip("Цель движения и атаки (корень башни с IDamageable). На ассете префаба сцену сюда не перетащить — оставь пустым: ищется объект с тегом towerTag.")]
         [SerializeField] Transform combatTarget;
 
@@ -36,7 +39,13 @@ namespace TheLastTowerDefence.Enemies.Systems
         {
             EnsureReferences();
 
-            if (config == null)
+            if (EnemyWaveSpawnContext.TryConsume(out var injectedStats, out var injectedLoot))
+            {
+                enemyStatsConfig = injectedStats;
+                lootDropConfig = injectedLoot;
+            }
+
+            if (enemyStatsConfig == null)
             {
                 Debug.LogError($"[{nameof(EnemyStatsBootstrap)}] Не назначен EnemyStatsConfig на '{name}'.", this);
                 enabled = false;
@@ -66,13 +75,13 @@ namespace TheLastTowerDefence.Enemies.Systems
                 }
             }
 
-            health.Configure(config);
-            movement.Configure(config, combatTarget);
-            attack.Configure(config, combatTarget);
+            health.Configure(enemyStatsConfig);
+            movement.Configure(enemyStatsConfig, combatTarget);
+            attack.Configure(enemyStatsConfig, combatTarget);
             if (heroFocus != null)
-                heroFocus.Initialize(combatTarget, config.isMeleeAttacker);
+                heroFocus.Initialize(combatTarget, enemyStatsConfig.isMeleeAttacker);
             if (lootDropper != null)
-                lootDropper.Configure(config);
+                lootDropper.Configure(enemyStatsConfig, lootDropConfig);
         }
 
         void EnsureReferences()

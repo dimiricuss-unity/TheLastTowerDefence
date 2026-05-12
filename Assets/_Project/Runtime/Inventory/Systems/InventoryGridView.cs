@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,53 @@ namespace TheLastTowerDefence.Inventory.Systems
         [SerializeField] [Range(0f, 1f)] private float highlightBlend = 0.55f;
 
         public RectTransform ItemsLayer => itemsLayer;
+
+        /// <summary>
+        /// Удаляет из <see cref="itemsLayer"/> все предметы, не помеченные как экипированные в слоте
+        /// (в сетке обычно уже false; проверка — страховка). Суммирует <c>statsConfig.price</c> каждого.
+        /// </summary>
+        /// <returns>Сумма продажи (золото).</returns>
+        public int SellUnequippedGridItemsAndReturnGold()
+        {
+            BindMissingReferences();
+            if (itemsLayer == null)
+            {
+                return 0;
+            }
+
+            var buffer = new List<InventoryItemView>(itemsLayer.childCount);
+            for (var i = 0; i < itemsLayer.childCount; i++)
+            {
+                var iv = itemsLayer.GetChild(i).GetComponent<InventoryItemView>();
+                if (iv == null || iv.Config == null || iv.IsEquippedInSlot)
+                {
+                    continue;
+                }
+
+                buffer.Add(iv);
+            }
+
+            var total = 0;
+            for (var i = 0; i < buffer.Count; i++)
+            {
+                var iv = buffer[i];
+                if (iv == null)
+                {
+                    continue;
+                }
+
+                var stats = iv.Config.statsConfig;
+                if (stats != null)
+                {
+                    total += Math.Max(0, stats.price);
+                }
+
+                Destroy(iv.gameObject);
+            }
+
+            RefreshScrollableContentDimensions();
+            return total;
+        }
 
         /// <summary>
         /// Попадает ли экранная точка во вьюпорт сетки (как для подсветки / размещения по указателю).

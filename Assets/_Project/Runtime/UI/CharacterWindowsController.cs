@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TheLastTowerDefence.Heroes.Systems;
+using TheLastTowerDefence.Inventory.Systems;
 
 namespace TheLastTowerDefence.UI
 {
@@ -113,6 +114,29 @@ namespace TheLastTowerDefence.UI
 
         private void CloseCharacterWindows()
         {
+            var popup = FindFirstObjectByType<InventoryItemPopupController>(FindObjectsInactive.Include);
+            if (popup != null)
+            {
+                popup.Hide();
+            }
+
+            var grid = FindFirstObjectByType<InventoryGridView>(FindObjectsInactive.Include);
+            var wallet = FindFirstObjectByType<PlayerGoldWallet>(FindObjectsInactive.Include);
+            if (grid != null)
+            {
+                var gold = grid.SellUnequippedGridItemsAndReturnGold();
+                if (gold > 0 && wallet != null)
+                {
+                    wallet.AddGold(gold);
+                }
+                else if (gold > 0 && wallet == null)
+                {
+                    Debug.LogWarning(
+                        $"[{nameof(CharacterWindowsController)}] Продано предметов на {gold} золота, но на сцене нет {nameof(PlayerGoldWallet)} — баланс не обновлён.",
+                        this);
+                }
+            }
+
             var heroes = FindObjectsByType<CharacterHeroStats>(FindObjectsSortMode.None);
             for (var i = 0; i < heroes.Length; i++)
             {

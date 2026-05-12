@@ -6,7 +6,7 @@ using TheLastTowerDefence.Inventory.Systems;
 namespace TheLastTowerDefence.Enemies.Systems
 {
     /// <summary>
-    /// Разыгрывает дроп сундука в момент смерти врага на основе настроек из <see cref="EnemyStatsConfig"/>.
+    /// Разыгрывает дроп сундука в момент смерти врага: общий шанс из <see cref="EnemyStatsConfig"/>, веса секций из <see cref="LootDropConfig"/>.
     /// </summary>
     [DisallowMultipleComponent]
     [RequireComponent(typeof(EnemyHealth))]
@@ -21,7 +21,8 @@ namespace TheLastTowerDefence.Enemies.Systems
         [SerializeField] GameObject relictChestPrefab;
 
         EnemyHealth _health;
-        EnemyStatsConfig _config;
+        EnemyStatsConfig _enemyStats;
+        LootDropConfig _lootDrop;
         AmmunitionCatalog _ammunitionCatalog;
 
         void Awake()
@@ -46,24 +47,26 @@ namespace TheLastTowerDefence.Enemies.Systems
             }
         }
 
-        public void Configure(EnemyStatsConfig config)
+        public void Configure(EnemyStatsConfig enemyStats, LootDropConfig lootDrop)
         {
-            _config = config;
+            _enemyStats = enemyStats;
+            _lootDrop = lootDrop;
         }
 
         void OnEnemyDied(EnemyHealth _)
         {
-            if (_config == null)
+            if (_enemyStats == null)
             {
                 return;
             }
 
-            if (!PassesGlobalLootRoll(_config.totalLootDropChancePercent))
+            if (!PassesGlobalLootRoll(_enemyStats.totalLootDropChancePercent))
             {
                 return;
             }
 
-            if (!TryPickChestPrefab(_config, out var selectedChestPrefab, out var selectedRarity) || selectedChestPrefab == null)
+            var sections = _lootDrop != null ? _lootDrop.lootDropSections : null;
+            if (!TryPickChestPrefab(sections, out var selectedChestPrefab, out var selectedRarity) || selectedChestPrefab == null)
             {
                 return;
             }
@@ -111,13 +114,12 @@ namespace TheLastTowerDefence.Enemies.Systems
         }
 
         bool TryPickChestPrefab(
-            EnemyStatsConfig config,
+            LootDropSection[] sections,
             out GameObject selectedChestPrefab,
             out LootRarity selectedRarity)
         {
             selectedChestPrefab = null;
             selectedRarity = LootRarity.Base;
-            var sections = config.lootDropSections;
             if (sections == null || sections.Length == 0)
             {
                 return false;

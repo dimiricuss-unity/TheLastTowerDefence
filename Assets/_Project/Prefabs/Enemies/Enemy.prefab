@@ -115,14 +115,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c3a2f1e0d5b4a7d8e9f001122334419, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  config: {fileID: 11400000, guid: d390d580f03eeca428e01765ca3ecd8b, type: 2}
+  enemyStatsConfig: {fileID: 0}
+  lootDropConfig: {fileID: 0}
   combatTarget: {fileID: 0}
   towerTag: Tower
   health: {fileID: 459001002}
   movement: {fileID: 459001003}
   attack: {fileID: 459001004}
   heroFocus: {fileID: 459001005}
-  lootDropper: {fileID: 0}
+  lootDropper: {fileID: 8225110097798866812}
 --- !u!114 &459001002
 MonoBehaviour:
   m_ObjectHideFlags: 0

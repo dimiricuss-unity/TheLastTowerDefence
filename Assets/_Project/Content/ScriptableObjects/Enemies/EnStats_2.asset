@@ -10,10 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c3a2f1e0d5b4a7d8e9f001122334415, type: 3}
-  m_Name: DefaultGrunt
+  m_Name: EnStats_2
   m_EditorClassIdentifier: 
-  maxHealth: 80
-  damage: 10
+  level: 2
+  maxHealth: 60
+  damage: 9
   attacksPerSecond: 1.2
-  experience: 12
+  experience: 45
   isMeleeAttacker: 1
+  totalLootDropChancePercent: 5

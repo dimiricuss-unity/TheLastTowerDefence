@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 58e0da345c2f2dc4b9a49ea06d795962, type: 3}
+  m_Name: Head_Magic_12
+  m_EditorClassIdentifier: 
+  slotType: 0
+  equipableCharacter: 0
+  rarity: 2
+  iconColor: {r: 0.69411767, g: 0.7372549, b: 1, a: 1}
+  weaponBaseMinDamageMin: 0
+  weaponBaseMinDamageMax: 0
+  weaponBaseMaxDamageMin: 0
+  weaponBaseMaxDamageMax: 0
+  weaponBaseAttacksPerSecondMin: 0
+  weaponBaseAttacksPerSecondMax: 0
+  weaponBaseCritModifierMin: 0
+  weaponBaseCritModifierMax: 0
+  weaponArmorRatingMin: 2
+  weaponArmorRatingMax: 4
+  bonusStrengthMin: 0
+  bonusStrengthMax: 0
+  bonusDexterityMin: 0
+  bonusDexterityMax: 0
+  bonusStaminaMin: 1
+  bonusStaminaMax: 4
+  bonusIntelligenceMin: 0
+  bonusIntelligenceMax: 0
+  bonusWillpowerMin: 0
+  bonusWillpowerMax: 0
+  bonusLuckMin: 0
+  bonusLuckMax: 0
+  bonusMaxHpMin: 1
+  bonusMaxHpMax: 5
+  bonusHpRegenPerSecondMin: 1
+  bonusHpRegenPerSecondMax: 2
+  bonusMaxManaMin: 0
+  bonusMaxManaMax: 0
+  bonusManaRegenPerSecondMin: 0
+  bonusManaRegenPerSecondMax: 0
+  bonusCriticalDamageMin: 0
+  bonusCriticalDamageMax: 0
+  priceMin: 1550
+  priceMax: 2000
